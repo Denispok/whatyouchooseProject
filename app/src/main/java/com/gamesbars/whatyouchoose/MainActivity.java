@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         if (!mSettings.contains(APP_PREFERENCES_LVL)){
             editor = mSettings.edit();
-            editor.putInt(APP_PREFERENCES_LVL,1);
+            editor.putInt(APP_PREFERENCES_LVL, 1);
             editor.commit();
         }
 

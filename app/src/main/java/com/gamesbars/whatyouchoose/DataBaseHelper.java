@@ -16,7 +16,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     // путь к базе данных вашего приложения
     private static String DB_PATH = "/data/data/com.gamesbars.whatyouchoose/databases/";
-    private static String DB_NAME = "myDBName";
+    private static String DB_NAME = "questions.db";
     private SQLiteDatabase myDataBase;
     private final Context mContext;
 
@@ -120,4 +120,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // Здесь можно добавить вспомогательные методы для доступа и получения данных из БД
     // вы можете возвращать курсоры через "return myDataBase.query(....)", это облегчит их использование
     // в создании адаптеров для ваших view
+
+    public SQLiteDatabase getDB(){
+        return myDataBase;
+    }
 }
