@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,9 @@ public class LevelActivity extends AppCompatActivity {
     TextView question_one_per;
     TextView question_two_per;
 
+    Animation percents_anim;
+    Animation.AnimationListener percents_anim_listener;
+
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
 
@@ -42,14 +47,14 @@ public class LevelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level);
 
-        //  Изначальное состояние = 0
-        state = false;
-
         // Присваивам Views переменным по id
         question_one = (TextView) findViewById(R.id.question_one);
         question_two = (TextView) findViewById(R.id.question_two);
         question_one_per = (TextView) findViewById(R.id.question_one_per);
         question_two_per = (TextView) findViewById(R.id.question_two_per);
+
+        //  Прописываем анимации
+        loadAnimation();
 
         //  Открываем настройки
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -58,8 +63,33 @@ public class LevelActivity extends AppCompatActivity {
         loadLevel();
     }
 
+    public void loadAnimation(){
+        percents_anim_listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                question_one_per.setAlpha(1);
+                question_two_per.setAlpha(1);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
+
+        percents_anim = AnimationUtils.loadAnimation(this, R.anim.percents_anim);
+        percents_anim.setAnimationListener(percents_anim_listener);
+    }
 
     public void loadLevel(){
+        //  Изначальное состояние = 0 (не возбужденное)
+        state = false;
+
         // Открываем DataBase и ситываем информацию для текущего уровня
         openDB();
 
@@ -68,8 +98,8 @@ public class LevelActivity extends AppCompatActivity {
 
         question_one.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE)));
         question_two.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO)));
-        question_one_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE)));
-        question_two_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO_PERCENTAGE)));
+        question_one_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE)) + "%");
+        question_two_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO_PERCENTAGE)) + "%");
 
 
         //  Закрываем DataBase
@@ -97,7 +127,28 @@ public class LevelActivity extends AppCompatActivity {
     public void clickTop(View view){
         if (!state){
 
+            toExcitingState();
+        } else {
+
+            endCurrentLevel();
+            loadLevel();
         }
     }
 
+    public void endCurrentLevel(){
+        question_one_per.setAlpha(0);
+        question_two_per.setAlpha(0);
+    }
+
+    public void toExcitingState(){
+        question_one_per.startAnimation(percents_anim);
+        question_two_per.startAnimation(percents_anim);
+
+        //  Сохраняем значение нового уровня и статистику в настройки
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
+        editor.commit();
+
+        state = true;
+    }
 }
