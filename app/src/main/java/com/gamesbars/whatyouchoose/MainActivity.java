@@ -23,7 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     //  Для работы с Shared Preferences
     public static final String APP_PREFERENCES = "settings";
-    public static final String APP_PREFERENCES_LVL = "level";
+    public static final String APP_PREFERENCES_LVL = "level";   //  Текущий уровень
+    public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
+                                                        (т.е. выбирал как такой-то процент людей */
+    public static final String APP_PREFERENCES_TIME_MAX = "time_max";      // max время выбора
+    public static final String APP_PREFERENCES_TIME_AVER = "time_average"; // среднее время выбора
+    public static final String APP_PREFERENCES_TIME_MIN = "time_min";      // min время выбора
     public SharedPreferences mSettings;
     public SharedPreferences.Editor editor;
 

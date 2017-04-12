@@ -7,6 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
@@ -18,6 +20,15 @@ import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO_PERCENTA
 import static com.gamesbars.whatyouchoose.MainActivity.TABLE_QUESTIONS_NAME;
 
 public class LevelActivity extends AppCompatActivity {
+
+    Boolean state; /*   Состояние layout: 0 - ожидает выбора (невозбужденное);
+                                          1 - ожидает нажатия для перехода на следующий уровень
+                                              (возбужденное) */
+
+    TextView question_one;
+    TextView question_two;
+    TextView question_one_per;
+    TextView question_two_per;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -31,20 +42,39 @@ public class LevelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level);
 
+        //  Изначальное состояние = 0
+        state = false;
+
+        // Присваивам Views переменным по id
+        question_one = (TextView) findViewById(R.id.question_one);
+        question_two = (TextView) findViewById(R.id.question_two);
+        question_one_per = (TextView) findViewById(R.id.question_one_per);
+        question_two_per = (TextView) findViewById(R.id.question_two_per);
+
         //  Открываем настройки
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        // Открываем DataBase
+        //  Загружаем уровень
+        loadLevel();
+    }
+
+
+    public void loadLevel(){
+        // Открываем DataBase и ситываем информацию для текущего уровня
         openDB();
 
-        //  Считываем значения
-        Toast.makeText(this, Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE))), Toast.LENGTH_LONG).show();
+        //  Считываем и применяем значения к Views
+        //Toast.makeText(this, Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE))), Toast.LENGTH_LONG).show();
+
+        question_one.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE)));
+        question_two.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO)));
+        question_one_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE)));
+        question_two_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO_PERCENTAGE)));
+
 
         //  Закрываем DataBase
         myDb.close();
     }
-
-
 
     public void openDB() {
         myDbHelper = new DataBaseHelper(this);
@@ -63,4 +93,11 @@ public class LevelActivity extends AppCompatActivity {
 
         cursor.moveToNext();
     }
+
+    public void clickTop(View view){
+        if (!state){
+
+        }
+    }
+
 }

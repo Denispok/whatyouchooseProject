@@ -12,9 +12,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:onClick="clickTop"
             android:background="@android:color/holo_orange_light">
 
             <TextView
+                android:id="@+id/question_one_per"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/black"
+                android:alpha="0"
+                android:textSize="32sp"/>
+
+            <TextView
+                android:id="@+id/question_one"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -29,9 +40,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/holo_red_light">
+            android:background="@android:color/holo_red_light"
+            android:onClick="clickBottom">
 
             <TextView
+                android:id="@+id/question_two_per"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/black"
+                android:alpha="0"
+                android:textSize="32sp"/>
+
+            <TextView
+                android:id="@+id/question_two"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
