@@ -32,6 +32,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_centerInParent="true"
                 android:text="Вилкой в глаз"
+                android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 
@@ -62,6 +63,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:text="В жопу раз"
+                android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 

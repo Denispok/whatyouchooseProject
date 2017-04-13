@@ -8,10 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
@@ -32,8 +33,12 @@ public class LevelActivity extends AppCompatActivity {
     TextView question_one_per;
     TextView question_two_per;
 
-    Animation percents_anim;
+    Animation percents_anim_top;
+    Animation percents_anim_bot;
+    Animation question_anim_top;
+    Animation question_anim_bot;
     Animation.AnimationListener percents_anim_listener;
+    Animation.AnimationListener question_anim_listener;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -45,6 +50,12 @@ public class LevelActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //  Делаем Fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_level);
 
         // Присваивам Views переменным по id
@@ -64,6 +75,7 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     public void loadAnimation(){
+        //  Анимация процентов
         percents_anim_listener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -73,7 +85,6 @@ public class LevelActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
             }
 
             @Override
@@ -82,8 +93,36 @@ public class LevelActivity extends AppCompatActivity {
             }
         };
 
-        percents_anim = AnimationUtils.loadAnimation(this, R.anim.percents_anim);
-        percents_anim.setAnimationListener(percents_anim_listener);
+        percents_anim_top = AnimationUtils.loadAnimation(this, R.anim.percents_anim_top);
+        percents_anim_top.setFillAfter(true);
+        percents_anim_top.setAnimationListener(percents_anim_listener);
+
+        percents_anim_bot = AnimationUtils.loadAnimation(this, R.anim.percents_anim_bot);
+        percents_anim_bot.setFillAfter(true);
+        percents_anim_bot.setAnimationListener(percents_anim_listener);
+
+        //  Анимация вопросов
+        question_anim_listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
+
+        question_anim_top = AnimationUtils.loadAnimation(this, R.anim.question_anim_top);
+        question_anim_top.setFillAfter(true);
+
+        question_anim_bot = AnimationUtils.loadAnimation(this, R.anim.question_anim_bot);
+        question_anim_bot.setFillAfter(true);
     }
 
     public void loadLevel(){
@@ -141,13 +180,22 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     public void toExcitingState(){
-        question_one_per.startAnimation(percents_anim);
-        question_two_per.startAnimation(percents_anim);
+        //  Запуск анимации
+        question_one_per.startAnimation(percents_anim_top);
+        question_two_per.startAnimation(percents_anim_bot);
+        question_one.startAnimation(question_anim_top);
+        question_two.startAnimation(question_anim_bot);
 
         //  Сохраняем значение нового уровня и статистику в настройки
         editor = mSettings.edit();
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
         editor.commit();
+
+        // DEBUG STRING
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
+            editor.putInt(APP_PREFERENCES_LVL, 1);
+            editor.commit();
+        }
 
         state = true;
     }
