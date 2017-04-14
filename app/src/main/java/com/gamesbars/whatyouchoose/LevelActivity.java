@@ -37,8 +37,12 @@ public class LevelActivity extends AppCompatActivity {
     Animation percents_anim_bot;
     Animation question_anim_top;
     Animation question_anim_bot;
+    Animation appear_anim;
+    Animation disappear_anim;
+    Animation disappear_anim_with_listener;
     Animation.AnimationListener percents_anim_listener;
     Animation.AnimationListener question_anim_listener;
+    Animation.AnimationListener disappear_anim_listener;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -123,6 +127,37 @@ public class LevelActivity extends AppCompatActivity {
 
         question_anim_bot = AnimationUtils.loadAnimation(this, R.anim.question_anim_bot);
         question_anim_bot.setFillAfter(true);
+
+        //  Анимации исчезновения/появления при загрузке нового уровня
+        disappear_anim_listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                loadLevel();
+
+                question_one.startAnimation(appear_anim);
+                question_two.startAnimation(appear_anim);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
+
+        appear_anim = AnimationUtils.loadAnimation(this, R.anim.appear_anim);
+        appear_anim.setFillAfter(true);
+
+        disappear_anim = AnimationUtils.loadAnimation(this, R.anim.disappear_anim);
+        disappear_anim.setFillAfter(true);
+
+        disappear_anim_with_listener = AnimationUtils.loadAnimation(this, R.anim.disappear_anim);
+        disappear_anim_with_listener.setFillAfter(true);
+        disappear_anim_with_listener.setAnimationListener(disappear_anim_listener);
     }
 
     public void loadLevel(){
@@ -170,13 +205,16 @@ public class LevelActivity extends AppCompatActivity {
         } else {
 
             endCurrentLevel();
-            loadLevel();
         }
     }
 
     public void endCurrentLevel(){
-        question_one_per.setAlpha(0);
-        question_two_per.setAlpha(0);
+        /*  Запуск анимации исчезновения + анимации с listener'ом, ответственной за loadLevel()
+                                                                    и запуск анимации появления */
+        question_one.startAnimation(disappear_anim_with_listener);
+        question_one_per.startAnimation(disappear_anim);
+        question_two.startAnimation(disappear_anim);
+        question_two_per.startAnimation(disappear_anim);
     }
 
     public void toExcitingState(){
