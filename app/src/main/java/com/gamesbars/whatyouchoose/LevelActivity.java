@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
@@ -28,6 +29,9 @@ public class LevelActivity extends AppCompatActivity {
                                           1 - ожидает нажатия для перехода на следующий уровень
                                               (возбужденное) */
 
+    RelativeLayout top_choice;
+    RelativeLayout bot_choice;
+
     TextView question_one;
     TextView question_two;
     TextView question_one_per;
@@ -37,12 +41,13 @@ public class LevelActivity extends AppCompatActivity {
     Animation percents_anim_bot;
     Animation question_anim_top;
     Animation question_anim_bot;
-    Animation appear_anim;
     Animation disappear_anim;
     Animation disappear_anim_with_listener;
+    Animation appear_anim;
     Animation.AnimationListener percents_anim_listener;
     Animation.AnimationListener question_anim_listener;
     Animation.AnimationListener disappear_anim_listener;
+    Animation.AnimationListener appear_anim_listener;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -63,6 +68,9 @@ public class LevelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_level);
 
         // Присваивам Views переменным по id
+        top_choice = (RelativeLayout) findViewById(R.id.top_choice);
+        bot_choice = (RelativeLayout) findViewById(R.id.bot_choice);
+
         question_one = (TextView) findViewById(R.id.question_one);
         question_two = (TextView) findViewById(R.id.question_two);
         question_one_per = (TextView) findViewById(R.id.question_one_per);
@@ -85,10 +93,15 @@ public class LevelActivity extends AppCompatActivity {
             public void onAnimationStart(Animation animation) {
                 question_one_per.setAlpha(1);
                 question_two_per.setAlpha(1);
+
+                top_choice.setClickable(false);
+                bot_choice.setClickable(false);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                top_choice.setClickable(true);
+                bot_choice.setClickable(true);
             }
 
             @Override
@@ -114,6 +127,7 @@ public class LevelActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+
             }
 
             @Override
@@ -132,7 +146,8 @@ public class LevelActivity extends AppCompatActivity {
         disappear_anim_listener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                top_choice.setClickable(false);
+                bot_choice.setClickable(false);
             }
 
             @Override
@@ -149,15 +164,34 @@ public class LevelActivity extends AppCompatActivity {
             }
         };
 
-        appear_anim = AnimationUtils.loadAnimation(this, R.anim.appear_anim);
-        appear_anim.setFillAfter(true);
-
         disappear_anim = AnimationUtils.loadAnimation(this, R.anim.disappear_anim);
         disappear_anim.setFillAfter(true);
 
         disappear_anim_with_listener = AnimationUtils.loadAnimation(this, R.anim.disappear_anim);
         disappear_anim_with_listener.setFillAfter(true);
         disappear_anim_with_listener.setAnimationListener(disappear_anim_listener);
+
+        appear_anim_listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                top_choice.setClickable(true);
+                bot_choice.setClickable(true);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
+
+        appear_anim = AnimationUtils.loadAnimation(this, R.anim.appear_anim);
+        appear_anim.setFillAfter(true);
+        appear_anim.setAnimationListener(appear_anim_listener);
     }
 
     public void loadLevel(){

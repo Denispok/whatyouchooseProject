@@ -11,6 +11,7 @@
     <translate
         android:duration="1500"
         android:fromYDelta="0"
-        android:toYDelta="15%p">
+        android:toYDelta="15%p"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator">
     </translate>
 </set>
