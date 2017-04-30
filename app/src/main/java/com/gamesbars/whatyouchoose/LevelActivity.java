@@ -271,4 +271,8 @@ public class LevelActivity extends AppCompatActivity {
 
         state = true;
     }
+
+    public void clickBack(View view){
+        this.onBackPressed();
+    }
 }

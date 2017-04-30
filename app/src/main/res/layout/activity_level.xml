@@ -14,7 +14,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:onClick="clickTop"
-            android:background="@android:color/holo_orange_light">
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:id="@+id/question_one_per"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/holo_red_light"
+            android:background="@color/colorSecondary"
             android:onClick="clickBottom">
 
             <TextView
@@ -79,5 +79,25 @@
         android:layout_centerInParent="true"
         android:text="\?"
         android:textSize="48sp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="4dp"
+        android:background="#0000"
+        android:src="@drawable/ic_arrow_back_black_36dp"
+        android:onClick="clickBack"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_alignParentRight="true"
+        android:background="#0000"
+        android:src="@drawable/ic_help_outline_black_36dp"/>
 
 </RelativeLayout>
