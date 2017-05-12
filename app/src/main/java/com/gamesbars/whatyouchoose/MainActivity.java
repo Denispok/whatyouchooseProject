@@ -13,6 +13,9 @@ import android.widget.Button;
 
 import java.io.IOException;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class MainActivity extends AppCompatActivity {
 
     //  Для работы с SQLite
@@ -36,9 +39,21 @@ public class MainActivity extends AppCompatActivity {
 
     Intent playIntent;
 
+    @Override   //  Подруб шрифтов
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //  Подруб шрифтов
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Exo2-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
 
         //  Делаем Fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);

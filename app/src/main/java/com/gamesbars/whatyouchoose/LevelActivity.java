@@ -15,6 +15,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_ONE;
@@ -56,9 +59,21 @@ public class LevelActivity extends AppCompatActivity {
     SQLiteDatabase myDb;
     Cursor cursor;
 
+    @Override   //  Подруб шрифтов
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //  Подруб шрифтов
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Exo2-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
 
         //  Делаем Fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
