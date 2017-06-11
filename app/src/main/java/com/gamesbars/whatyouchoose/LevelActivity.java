@@ -14,12 +14,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_AVER;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MAX;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MIN;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_ONE;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_ONE_PERCENTAGE;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO;
@@ -32,13 +37,21 @@ public class LevelActivity extends AppCompatActivity {
                                           1 - ожидает нажатия для перехода на следующий уровень
                                               (возбужденное) */
 
+    Integer coins;
+    Long level_time;
+
     RelativeLayout top_choice;
     RelativeLayout bot_choice;
 
+    TextView level_coins;
     TextView question_one;
     TextView question_two;
     TextView question_one_per;
     TextView question_two_per;
+
+    Animation appear_coins_anim;
+    Animation disappear_coins_anim;
+    Animation.AnimationListener disappear_coins_anim_listener;
 
     Animation percents_anim_top;
     Animation percents_anim_bot;
@@ -86,6 +99,7 @@ public class LevelActivity extends AppCompatActivity {
         top_choice = (RelativeLayout) findViewById(R.id.top_choice);
         bot_choice = (RelativeLayout) findViewById(R.id.bot_choice);
 
+        level_coins = (TextView) findViewById(R.id.level_coins);
         question_one = (TextView) findViewById(R.id.question_one);
         question_two = (TextView) findViewById(R.id.question_two);
         question_one_per = (TextView) findViewById(R.id.question_one_per);
@@ -97,11 +111,42 @@ public class LevelActivity extends AppCompatActivity {
         //  Открываем настройки
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
+        //  Начинаем отсчет времени уровня
+        level_time = System.currentTimeMillis();
+
         //  Загружаем уровень
         loadLevel();
     }
 
     public void loadAnimation(){
+
+        //  Анимация коинов
+        disappear_coins_anim_listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //  Обновляем коины
+                level_coins.setText(Integer.toString(coins));
+                level_coins.startAnimation(appear_coins_anim);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
+
+        disappear_coins_anim = AnimationUtils.loadAnimation(this, R.anim.disappear_coins_anim);
+        disappear_coins_anim.setFillAfter(true);
+        disappear_coins_anim.setAnimationListener(disappear_coins_anim_listener);
+
+        appear_coins_anim = AnimationUtils.loadAnimation(this, R.anim.appear_coins_anim);
+        appear_coins_anim.setFillAfter(true);
+
         //  Анимация процентов
         percents_anim_listener = new Animation.AnimationListener() {
             @Override
@@ -131,7 +176,6 @@ public class LevelActivity extends AppCompatActivity {
 
         percents_anim_bot = AnimationUtils.loadAnimation(this, R.anim.percents_anim_bot);
         percents_anim_bot.setFillAfter(true);
-        percents_anim_bot.setAnimationListener(percents_anim_listener);
 
         //  Анимация вопросов
         question_anim_listener = new Animation.AnimationListener() {
@@ -196,6 +240,9 @@ public class LevelActivity extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 top_choice.setClickable(true);
                 bot_choice.setClickable(true);
+
+                //  Начинаем новый отсчет времени уровня
+                level_time = System.currentTimeMillis();
             }
 
             @Override
@@ -212,6 +259,10 @@ public class LevelActivity extends AppCompatActivity {
     public void loadLevel(){
         //  Изначальное состояние = 0 (не возбужденное)
         state = false;
+
+        //  Загружаем коины
+        coins = mSettings.getInt(APP_PREFERENCES_COINS, 0);
+        level_coins.setText(Integer.toString(coins));
 
         // Открываем DataBase и ситываем информацию для текущего уровня
         openDB();
@@ -268,26 +319,63 @@ public class LevelActivity extends AppCompatActivity {
 
     public void toExcitingState(){
         //  Запуск анимации
+        level_coins.startAnimation(disappear_coins_anim);
         question_one_per.startAnimation(percents_anim_top);
         question_two_per.startAnimation(percents_anim_bot);
         question_one.startAnimation(question_anim_top);
         question_two.startAnimation(question_anim_bot);
 
-        //  Сохраняем значение нового уровня и статистику в настройки
+        //  Прибавляем коины
+        coins += 10;
+
+        //  Записываем время уровня
+        level_time = System.currentTimeMillis() - level_time;
+        //  DEBUG TOAST
+        Toast.makeText(this, Float.toString(Math.round(level_time / 10f) / 100f), Toast.LENGTH_LONG).show();
+
+        //  Сохраняем значение нового уровня, монеты и статистику в настройки
         editor = mSettings.edit();
+
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 1) {
+            editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
+            editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
+            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(level_time / 10f) / 100f);
+        } else {
+            if (mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0) < (Math.round(level_time / 10f) / 100f)) {
+                editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
+            }
+
+            if (mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0) > (Math.round(level_time / 10f) / 100f)) {
+                editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
+            }
+
+            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
+                    + Math.round(level_time / 10f) / 100f) / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f);
+        }
+
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
-        editor.commit();
+        editor.putInt(APP_PREFERENCES_COINS, coins);
+
+        editor.apply();
+
+        //  DEBUG TOAST
+       // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
 
         // DEBUG STRING
         if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
             editor.putInt(APP_PREFERENCES_LVL, 1);
             editor.commit();
         }
+        // DEBUG END
 
         state = true;
     }
 
     public void clickBack(View view){
         this.onBackPressed();
+    }
+
+    public void clickCoins(View view){
+
     }
 }

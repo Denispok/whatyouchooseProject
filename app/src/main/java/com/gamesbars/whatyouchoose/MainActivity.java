@@ -31,9 +31,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_LVL = "level";   //  Текущий уровень
     public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
                                                         (т.е. выбирал как такой-то процент людей */
+    public static final String APP_PREFERENCES_PER_MOST = "percent_most"; // самый неуникальный выбор
+    public static final String APP_PREFERENCES_PER_LESS = "percent_less"; // самый уникальный выбор
     public static final String APP_PREFERENCES_TIME_MAX = "time_max";      // max время выбора
     public static final String APP_PREFERENCES_TIME_AVER = "time_average"; // среднее время выбора
     public static final String APP_PREFERENCES_TIME_MIN = "time_min";      // min время выбора
+    public static final String APP_PREFERENCES_COINS = "coins";      // монеты
     public SharedPreferences mSettings;
     public SharedPreferences.Editor editor;
 
@@ -69,6 +72,30 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt(APP_PREFERENCES_LVL, 1);
             editor.commit();
         }
+
+        if (!mSettings.contains(APP_PREFERENCES_COINS)){
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_COINS, 0);
+            editor.commit();
+        }
+
+        /*if (!mSettings.contains(APP_PREFERENCES_TIME_MAX)){
+            editor = mSettings.edit();
+            editor.putFloat(APP_PREFERENCES_TIME_MAX, 0);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_TIME_AVER)){
+            editor = mSettings.edit();
+            editor.putFloat(APP_PREFERENCES_TIME_AVER, 0);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_TIME_MIN)){
+            editor = mSettings.edit();
+            editor.putFloat(APP_PREFERENCES_TIME_MIN, 0);
+            editor.commit();
+        }*/
 
         //  Создаем DataBase с помощью DataBaseHelper
         myDbHelper = new DataBaseHelper(this);
