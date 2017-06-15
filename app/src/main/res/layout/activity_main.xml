@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorPrimary"
+    android:orientation="vertical"
     tools:context="com.gamesbars.whatyouchoose.MainActivity">
 
     <LinearLayout
@@ -17,14 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textAlignment="center"
-            android:text="@string/app_name"
-            android:textColor="@android:color/white"
             android:shadowColor="@color/colorSecondaryLighter"
             android:shadowDx="4"
             android:shadowDy="4"
             android:shadowRadius="1"
-            android:textSize="56sp"/>
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="56sp" />
 
     </LinearLayout>
 
@@ -35,20 +35,21 @@
         android:orientation="vertical">
 
         <Button
+            style="@style/ButtonStyle"
             android:layout_marginTop="36dp"
-            android:text="Выбирать"
             android:onClick="play"
-            style="@style/ButtonStyle"/>
+            android:text="Выбирать" />
 
 
         <Button
-            android:text="Статистика"
-            style="@style/ButtonStyle"/>
+            style="@style/ButtonStyle"
+            android:onClick="statistic"
+            android:text="@string/statistic" />
 
 
         <Button
-            android:text="Отключить рекламу"
-            style="@style/ButtonStyle"/>
+            style="@style/ButtonStyle"
+            android:text="Магазин" />
 
 
     </LinearLayout>

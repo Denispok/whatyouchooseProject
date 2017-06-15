@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public SharedPreferences.Editor editor;
 
     Intent playIntent;
+    Intent statIntent;
 
     @Override   //  Подруб шрифтов
     protected void attachBaseContext(Context newBase) {
@@ -110,5 +111,10 @@ public class MainActivity extends AppCompatActivity {
     public void play(View view){
         playIntent = new Intent(this, LevelActivity.class);
         startActivity(playIntent);
+    }
+
+    public void statistic(View view){
+        statIntent = new Intent(this, StatActivity.class);
+        startActivity(statIntent);
     }
 }

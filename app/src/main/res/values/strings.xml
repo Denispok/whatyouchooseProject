@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Что ты выберешь?</string>
+    <string name="percent_top">%d%%</string>
+    <string name="percent_bot">%d%%</string>
+    <string name="statistic">Статистика</string>
 </resources>

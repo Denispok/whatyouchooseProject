@@ -22,6 +22,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_MOST;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_AVER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MAX;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MIN;
@@ -39,6 +42,11 @@ public class LevelActivity extends AppCompatActivity {
 
     Integer coins;
     Long level_time;
+    String choice;
+    Integer choice_per;
+
+    Integer top_percent;
+    Integer bot_percent;
 
     RelativeLayout top_choice;
     RelativeLayout bot_choice;
@@ -272,9 +280,12 @@ public class LevelActivity extends AppCompatActivity {
 
         question_one.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE)));
         question_two.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO)));
-        question_one_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE)) + "%");
-        question_two_per.setText(cursor.getString(cursor.getColumnIndex(KEY_QUESTION_TWO_PERCENTAGE)) + "%");
 
+        top_percent = cursor.getInt(cursor.getColumnIndex(KEY_QUESTION_ONE_PERCENTAGE));
+        bot_percent = cursor.getInt(cursor.getColumnIndex(KEY_QUESTION_TWO_PERCENTAGE));
+
+        question_one_per.setText(String.format(getString(R.string.percent_top), top_percent));
+        question_two_per.setText(String.format(getString(R.string.percent_bot), bot_percent));
 
         //  Закрываем DataBase
         myDb.close();
@@ -301,6 +312,20 @@ public class LevelActivity extends AppCompatActivity {
     public void clickTop(View view){
         if (!state){
 
+            choice = "top";
+            choice_per = top_percent;
+            toExcitingState();
+        } else {
+
+            endCurrentLevel();
+        }
+    }
+
+    public void clickBottom(View view){
+        if (!state){
+
+            choice = "bottom";
+            choice_per = bot_percent;
             toExcitingState();
         } else {
 
@@ -334,12 +359,33 @@ public class LevelActivity extends AppCompatActivity {
         Toast.makeText(this, Float.toString(Math.round(level_time / 10f) / 100f), Toast.LENGTH_LONG).show();
 
         //  Сохраняем значение нового уровня, монеты и статистику в настройки
+        saveStatistic();
+
+        //  DEBUG TOAST
+       // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
+
+        // DEBUG STRING
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_LVL, 1);
+            editor.commit();
+        }
+        // DEBUG END
+
+        state = true;
+    }
+
+    public void saveStatistic(){
         editor = mSettings.edit();
 
+        // Инициализация статистики в Preferences на 1 уровне
         if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 1) {
             editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(level_time / 10f) / 100f);
+            editor.putInt(APP_PREFERENCES_PER_MOST, choice_per);
+            editor.putInt(APP_PREFERENCES_PER_LESS, choice_per);
+            editor.putFloat(APP_PREFERENCES_PER, choice_per);
         } else {
             if (mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0) < (Math.round(level_time / 10f) / 100f)) {
                 editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
@@ -351,24 +397,23 @@ public class LevelActivity extends AppCompatActivity {
 
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
                     + Math.round(level_time / 10f) / 100f) / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f);
+
+            if (choice_per > mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)){
+                editor.putInt(APP_PREFERENCES_PER_MOST, choice_per);
+            }
+
+            if (choice_per < mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)){
+                editor.putInt(APP_PREFERENCES_PER_LESS, choice_per);
+            }
+
+            editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
+                    + choice_per / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f));
         }
 
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
         editor.putInt(APP_PREFERENCES_COINS, coins);
 
         editor.apply();
-
-        //  DEBUG TOAST
-       // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
-
-        // DEBUG STRING
-        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
-            editor.putInt(APP_PREFERENCES_LVL, 1);
-            editor.commit();
-        }
-        // DEBUG END
-
-        state = true;
     }
 
     public void clickBack(View view){
