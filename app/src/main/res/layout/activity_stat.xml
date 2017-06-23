@@ -23,6 +23,53 @@
             android:textColor="@android:color/white"
             android:textSize="42sp" />
 
+        <TextView
+            android:id="@+id/stat_per_aver"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_per_aver" />
+
+        <!-- android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_gravity="center"
+android:layout_margin="8dp"
+android:shadowColor="@color/colorSecondaryLighter"
+android:shadowDx="4"
+android:shadowDy="4"
+android:shadowRadius="1"
+android:textAlignment="center"
+android:textColor="@android:color/white"
+android:textSize="28sp" -->
+
+        <TextView
+            android:id="@+id/stat_count"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_count" />
+
+        <TextView
+            android:id="@+id/stat_time_aver"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_time_aver" />
+
+        <TextView
+            android:id="@+id/stat_per_min"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_per_min" />
+
+        <TextView
+            android:id="@+id/stat_per_max"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_per_max" />
+
+        <TextView
+            android:id="@+id/stat_time_max"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_time_max" />
+
+        <TextView
+            android:id="@+id/stat_time_min"
+            style="@style/StatItemStyle"
+            android:text="@string/stat_time_min" />
+
     </LinearLayout>
 
     <ImageButton

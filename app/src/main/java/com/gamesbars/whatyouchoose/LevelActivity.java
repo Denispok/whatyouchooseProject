@@ -387,6 +387,7 @@ public class LevelActivity extends AppCompatActivity {
             editor.putInt(APP_PREFERENCES_PER_LESS, choice_per);
             editor.putFloat(APP_PREFERENCES_PER, choice_per);
         } else {
+            // Записывание новых значений статистики
             if (mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0) < (Math.round(level_time / 10f) / 100f)) {
                 editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
             }
@@ -407,7 +408,7 @@ public class LevelActivity extends AppCompatActivity {
             }
 
             editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
-                    + choice_per / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f));
+                    + choice_per) / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f);
         }
 
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
