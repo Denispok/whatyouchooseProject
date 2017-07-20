@@ -1,13 +1,22 @@
 <resources>
     <string name="app_name">Что ты выберешь?</string>
+    <string name="choose">Выбирать</string>
+    <string name="statistic">Статистика</string>
     <string name="percent_top">%d%%</string>
     <string name="percent_bot">%d%%</string>
-    <string name="statistic">Статистика</string>
     <string name="stat_per_aver">Вы отвечали так же, как %s%% игроков</string>
-    <string name="stat_count">Всего сделано выборов: %d</string>
-    <string name="stat_time_aver">Среднее время выбора: %s сек.</string>
-    <string name="stat_per_min">Самый уникальный выбор: %d%%</string>
-    <string name="stat_per_max">Самый неуникальный выбор: %d%%</string>
-    <string name="stat_time_max">Самый трудный выбор: %s сек.</string>
-    <string name="stat_time_min">Самый лёгкий выбор: %s сек.</string>
+    <string name="stat_count">Сделано выборов</string>
+    <string name="stat_time_aver">Среднее время выбора</string>
+    <string name="stat_per_min">Уникальнейший выбор</string>
+    <string name="stat_per_max">Самый скучный выбор</string>
+    <string name="stat_time_max">Самый трудный выбор</string>
+    <string name="stat_time_min">Самый лёгкий выбор</string>
+
+    <!-- Заглушки для activity_stat -->
+    <string name="stat_time_value">%s сек.</string>
+    <string name="stat_per_value">%d%%</string>
+    <string name="stat_value">21</string>
+
+    <string name="answered_false">Игроков ответили по-другому</string>
+    <string name="answered_true">Игроков ответили также</string>
 </resources>

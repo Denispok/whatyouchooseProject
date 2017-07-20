@@ -1,11 +1,15 @@
 package com.gamesbars.whatyouchoose;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -14,7 +18,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -52,19 +57,29 @@ public class LevelActivity extends AppCompatActivity {
     RelativeLayout bot_choice;
 
     TextView level_coins;
+    TextView level_coins_add;
     TextView question_one;
     TextView question_two;
     TextView question_one_per;
     TextView question_two_per;
+    TextView answered_top;
+    TextView answered_bot;
+
+    LottieAnimationView check_top;
+    LottieAnimationView check_bot;
+    Animation check_anim_top;
+    Animation check_anim_bot;
 
     Animation appear_coins_anim;
     Animation disappear_coins_anim;
     Animation.AnimationListener disappear_coins_anim_listener;
+    Animation coins_add_anim;
 
     Animation percents_anim_top;
     Animation percents_anim_bot;
     Animation question_anim_top;
     Animation question_anim_bot;
+    Animation answered_top_anim;
     Animation disappear_anim;
     Animation disappear_anim_with_listener;
     Animation appear_anim;
@@ -72,6 +87,8 @@ public class LevelActivity extends AppCompatActivity {
     Animation.AnimationListener question_anim_listener;
     Animation.AnimationListener disappear_anim_listener;
     Animation.AnimationListener appear_anim_listener;
+
+    AlertDialog helpDialog;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -108,13 +125,22 @@ public class LevelActivity extends AppCompatActivity {
         bot_choice = (RelativeLayout) findViewById(R.id.bot_choice);
 
         level_coins = (TextView) findViewById(R.id.level_coins);
+        level_coins_add = (TextView) findViewById(R.id.level_coins_add);
         question_one = (TextView) findViewById(R.id.question_one);
         question_two = (TextView) findViewById(R.id.question_two);
         question_one_per = (TextView) findViewById(R.id.question_one_per);
         question_two_per = (TextView) findViewById(R.id.question_two_per);
+        answered_top = (TextView) findViewById(R.id.answered_top);
+        answered_bot = (TextView) findViewById(R.id.answered_bot);
+
+        check_top = (LottieAnimationView) findViewById(R.id.check_top);
+        check_bot = (LottieAnimationView) findViewById(R.id.check_bot);
 
         //  Прописываем анимации
         loadAnimation();
+
+        //  Загружаем диалоговое окно с инфой
+        loadHelpDialog();
 
         //  Открываем настройки
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -155,21 +181,49 @@ public class LevelActivity extends AppCompatActivity {
         appear_coins_anim = AnimationUtils.loadAnimation(this, R.anim.appear_coins_anim);
         appear_coins_anim.setFillAfter(true);
 
+        coins_add_anim = AnimationUtils.loadAnimation(this, R.anim.coins_add_anim);
+        coins_add_anim.setFillAfter(true);
+
+        //  Check anims
+        check_anim_top = AnimationUtils.loadAnimation(this, R.anim.check_anim_top);
+        check_anim_top.setFillAfter(true);
+
+        check_anim_bot = AnimationUtils.loadAnimation(this, R.anim.check_anim_bot);
+        check_anim_bot.setFillAfter(true);
+
         //  Анимация процентов
         percents_anim_listener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                question_one_per.setAlpha(1);
-                question_two_per.setAlpha(1);
+                question_one_per.setAlpha(1.0f);
+                question_two_per.setAlpha(1.0f);
+                answered_top.setAlpha(1.0f);
+                answered_bot.setAlpha(1.0f);
 
                 top_choice.setClickable(false);
                 bot_choice.setClickable(false);
+
+                if(choice.equals("top")){
+                    check_top.setAlpha(0.8f);
+                    check_top.startAnimation(check_anim_top);
+                    check_bot.setAlpha(0f);
+                } else {
+                    check_bot.setAlpha(0.8f);
+                    check_bot.startAnimation(check_anim_bot);
+                    check_top.setAlpha(0f);
+                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 top_choice.setClickable(true);
                 bot_choice.setClickable(true);
+
+                if(choice.equals("top")){
+                    check_top.playAnimation();
+                } else {
+                    check_bot.playAnimation();
+                }
             }
 
             @Override
@@ -181,6 +235,9 @@ public class LevelActivity extends AppCompatActivity {
         percents_anim_top = AnimationUtils.loadAnimation(this, R.anim.percents_anim_top);
         percents_anim_top.setFillAfter(true);
         percents_anim_top.setAnimationListener(percents_anim_listener);
+
+        answered_top_anim = AnimationUtils.loadAnimation(this, R.anim.percents_anim_top);
+        answered_top_anim.setFillAfter(true);
 
         percents_anim_bot = AnimationUtils.loadAnimation(this, R.anim.percents_anim_bot);
         percents_anim_bot.setFillAfter(true);
@@ -264,6 +321,26 @@ public class LevelActivity extends AppCompatActivity {
         appear_anim.setAnimationListener(appear_anim_listener);
     }
 
+    public void loadHelpDialog(){
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Комиссия Поклонской ни разу не собиралась для обсуждения деклараций депутатов, чем недовольны даже сами её участники.\n" +
+                "\n" +
+                "Сама Поклонская никак это не комментирует. Видимо, у неё есть дела поважнее.")
+                .setTitle("Важная информация");
+
+        builder.setNegativeButton("Так точно!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        helpDialog = builder.create();
+    }
+
     public void loadLevel(){
         //  Изначальное состояние = 0 (не возбужденное)
         state = false;
@@ -314,6 +391,10 @@ public class LevelActivity extends AppCompatActivity {
 
             choice = "top";
             choice_per = top_percent;
+
+            answered_top.setText(R.string.answered_true);
+            answered_bot.setText(R.string.answered_false);
+
             toExcitingState();
         } else {
 
@@ -326,6 +407,10 @@ public class LevelActivity extends AppCompatActivity {
 
             choice = "bottom";
             choice_per = bot_percent;
+
+            answered_top.setText(R.string.answered_false);
+            answered_bot.setText(R.string.answered_true);
+
             toExcitingState();
         } else {
 
@@ -340,23 +425,36 @@ public class LevelActivity extends AppCompatActivity {
         question_one_per.startAnimation(disappear_anim);
         question_two.startAnimation(disappear_anim);
         question_two_per.startAnimation(disappear_anim);
+        answered_top.startAnimation(disappear_anim);
+        answered_bot.startAnimation(disappear_anim);
+
+        if(choice.equals("top")){
+            check_top.startAnimation(disappear_anim);
+        } else {
+            check_bot.startAnimation(disappear_anim);
+        }
     }
 
     public void toExcitingState(){
         //  Запуск анимации
         level_coins.startAnimation(disappear_coins_anim);
+        level_coins_add.setAlpha(1.0f);
+        level_coins_add.startAnimation(coins_add_anim);
         question_one_per.startAnimation(percents_anim_top);
         question_two_per.startAnimation(percents_anim_bot);
         question_one.startAnimation(question_anim_top);
         question_two.startAnimation(question_anim_bot);
+        answered_top.startAnimation(answered_top_anim);
+        answered_bot.startAnimation(percents_anim_bot);
 
         //  Прибавляем коины
         coins += 10;
 
         //  Записываем время уровня
         level_time = System.currentTimeMillis() - level_time;
+
         //  DEBUG TOAST
-        Toast.makeText(this, Float.toString(Math.round(level_time / 10f) / 100f), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, Float.toString(Math.round(level_time / 10f) / 100f), Toast.LENGTH_LONG).show();
 
         //  Сохраняем значение нового уровня, монеты и статистику в настройки
         saveStatistic();
@@ -364,7 +462,7 @@ public class LevelActivity extends AppCompatActivity {
         //  DEBUG TOAST
        // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
 
-        // DEBUG STRING
+        // DEBUG STRING START
         if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL, 1);
@@ -423,5 +521,9 @@ public class LevelActivity extends AppCompatActivity {
 
     public void clickCoins(View view){
 
+    }
+
+    public void clickHelp(View view){
+        helpDialog.show();
     }
 }

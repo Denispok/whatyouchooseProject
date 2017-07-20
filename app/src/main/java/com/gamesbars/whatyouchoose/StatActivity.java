@@ -74,12 +74,12 @@ public class StatActivity extends AppCompatActivity {
 
     void loadStat(){
         stat_per_aver.setText(String.format(getString(R.string.stat_per_aver), String.valueOf(mSettings.getFloat(APP_PREFERENCES_PER, 0))));
-        stat_count.setText(String.format(getString(R.string.stat_count), (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)));
-        stat_time_aver.setText(String.format(getString(R.string.stat_time_aver), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0))));
-        stat_per_min.setText(String.format(getString(R.string.stat_per_min), mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)));
-        stat_per_max.setText(String.format(getString(R.string.stat_per_max), mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)));
-        stat_time_min.setText(String.format(getString(R.string.stat_time_min), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0))));
-        stat_time_max.setText(String.format(getString(R.string.stat_time_max), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0))));
+        stat_count.setText(String.valueOf(mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1));
+        stat_time_aver.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0))));
+        stat_per_min.setText(String.format(getString(R.string.stat_per_value), mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)));
+        stat_per_max.setText(String.format(getString(R.string.stat_per_value), mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)));
+        stat_time_min.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0))));
+        stat_time_max.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0))));
 
     }
 
