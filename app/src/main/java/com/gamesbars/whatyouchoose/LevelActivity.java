@@ -1,6 +1,5 @@
 package com.gamesbars.whatyouchoose;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -8,7 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +29,7 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_MOST;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_AVER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MAX;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MIN;
@@ -49,12 +49,16 @@ public class LevelActivity extends AppCompatActivity {
     Long level_time;
     String choice;
     Integer choice_per;
+    Integer theme;
 
     Integer top_percent;
     Integer bot_percent;
 
     RelativeLayout top_choice;
     RelativeLayout bot_choice;
+
+    ImageButton back_button;
+    ImageButton help_button;
 
     TextView level_coins;
     TextView level_coins_add;
@@ -118,11 +122,20 @@ public class LevelActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //  Открываем настройки
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        //  Устанавливаем тему, отображаем Activity
+        theme = mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+        setTheme(theme);
         setContentView(R.layout.activity_level);
 
         // Присваивам Views переменным по id
         top_choice = (RelativeLayout) findViewById(R.id.top_choice);
         bot_choice = (RelativeLayout) findViewById(R.id.bot_choice);
+
+        back_button = (ImageButton) findViewById(R.id.back_button);
+        help_button = (ImageButton) findViewById(R.id.help_button);
 
         level_coins = (TextView) findViewById(R.id.level_coins);
         level_coins_add = (TextView) findViewById(R.id.level_coins_add);
@@ -136,20 +149,28 @@ public class LevelActivity extends AppCompatActivity {
         check_top = (LottieAnimationView) findViewById(R.id.check_top);
         check_bot = (LottieAnimationView) findViewById(R.id.check_bot);
 
+        // Загружаем изображения темы
+        loadThemeImages();
+
         //  Прописываем анимации
         loadAnimation();
 
         //  Загружаем диалоговое окно с инфой
         loadHelpDialog();
 
-        //  Открываем настройки
-        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-
         //  Начинаем отсчет времени уровня
         level_time = System.currentTimeMillis();
 
         //  Загружаем уровень
         loadLevel();
+    }
+
+    private void loadThemeImages() {
+        if(theme == R.style.BlackTheme || theme == R.style.FreshTheme){
+            back_button.setImageResource(R.drawable.ic_arrow_back_white_36dp);
+            level_coins.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_stars_white_24dp), null, null, null);
+            help_button.setImageResource(R.drawable.ic_help_outline_white_36dp);
+        }
     }
 
     public void loadAnimation(){
@@ -326,12 +347,10 @@ public class LevelActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // 2. Chain together various setter methods to set the dialog characteristics
-        builder.setMessage("Комиссия Поклонской ни разу не собиралась для обсуждения деклараций депутатов, чем недовольны даже сами её участники.\n" +
-                "\n" +
-                "Сама Поклонская никак это не комментирует. Видимо, у неё есть дела поважнее.")
-                .setTitle("Важная информация");
+        builder.setMessage(R.string.help_dialog_message)
+                .setTitle(R.string.help_dialog_title);
 
-        builder.setNegativeButton("Так точно!", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.help_dialog_negative, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
             }

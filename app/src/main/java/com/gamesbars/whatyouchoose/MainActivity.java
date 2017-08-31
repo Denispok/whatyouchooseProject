@@ -3,13 +3,11 @@ package com.gamesbars.whatyouchoose;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.SQLException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import java.io.IOException;
 
@@ -28,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     //  Для работы с Shared Preferences
     public static final String APP_PREFERENCES = "settings";
+    public static final String APP_PREFERENCES_THEME = "theme";
     public static final String APP_PREFERENCES_LVL = "level";   //  Текущий уровень
     public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
                                                         (т.е. выбирал как такой-то процент людей */
@@ -37,11 +36,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_TIME_AVER = "time_average"; // среднее время выбора
     public static final String APP_PREFERENCES_TIME_MIN = "time_min";      // min время выбора
     public static final String APP_PREFERENCES_COINS = "coins";      // монеты
+
+    public static final String APP_PREFERENCES_THEME_STD = "theme_std"; // куплена ли стандартная тема
+    public static final String APP_PREFERENCES_THEME_BLACK = "theme_black"; // куплена ли черная тема
+    public static final String APP_PREFERENCES_THEME_WHITE = "theme_white"; // куплена ли белая тема
+    public static final String APP_PREFERENCES_THEME_FRESH = "theme_fresh"; // куплена ли тема свежесть
     public SharedPreferences mSettings;
     public SharedPreferences.Editor editor;
 
     Intent playIntent;
     Intent statIntent;
+    Intent shopIntent;
 
     @Override   //  Подруб шрифтов
     protected void attachBaseContext(Context newBase) {
@@ -64,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_main);
-
         //  Загружаем настройки или создаем новые при первом запуске
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         if (!mSettings.contains(APP_PREFERENCES_LVL)){
@@ -77,6 +80,33 @@ public class MainActivity extends AppCompatActivity {
         if (!mSettings.contains(APP_PREFERENCES_COINS)){
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_COINS, 0);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_THEME)){
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_THEME_STD)){
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_THEME_STD, false);
+            editor.commit();
+        }
+        if (!mSettings.contains(APP_PREFERENCES_THEME_BLACK)){
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_THEME_BLACK, false);
+            editor.commit();
+        }
+        if (!mSettings.contains(APP_PREFERENCES_THEME_WHITE)){
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_THEME_WHITE, false);
+            editor.commit();
+        }
+        if (!mSettings.contains(APP_PREFERENCES_THEME_FRESH)){
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_THEME_FRESH, false);
             editor.commit();
         }
 
@@ -98,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }*/
 
+        //  Устанавливаем тему, отображаем Activity
+        setTheme(mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme));
+        setContentView(R.layout.activity_main);
+
         //  Создаем DataBase с помощью DataBaseHelper
         myDbHelper = new DataBaseHelper(this);
 
@@ -116,5 +150,38 @@ public class MainActivity extends AppCompatActivity {
     public void statistic(View view){
         statIntent = new Intent(this, StatActivity.class);
         startActivity(statIntent);
+    }
+
+    public void shop(View view){
+        shopIntent = new Intent(this, ShopActivity.class);
+        startActivity(shopIntent);
+    }
+
+    public void setStd(View view){
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setBlack(View view){
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.BlackTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setWhite(View view){
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.WhiteTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setFresh(View view){
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.FreshTheme);
+        editor.commit();
+        this.recreate();
     }
 }

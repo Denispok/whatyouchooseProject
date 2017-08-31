@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -17,11 +18,14 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_MOST;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_AVER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MAX;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_TIME_MIN;
 
 public class StatActivity extends AppCompatActivity {
+
+    Integer theme;
 
     TextView stat_per_aver;
     TextView stat_count;
@@ -30,6 +34,8 @@ public class StatActivity extends AppCompatActivity {
     TextView stat_per_max;
     TextView stat_time_min;
     TextView stat_time_max;
+
+    ImageButton back_button;
 
     SharedPreferences mSettings;
 
@@ -54,6 +60,12 @@ public class StatActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // Получаем настройки
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        //  Устанавливаем тему, отображаем Activity
+        theme = mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+        setTheme(theme);
         setContentView(R.layout.activity_stat);
 
         // Присваивам Views переменным по id
@@ -65,11 +77,19 @@ public class StatActivity extends AppCompatActivity {
         stat_time_min = (TextView) findViewById(R.id.stat_time_min);
         stat_time_max = (TextView) findViewById(R.id.stat_time_max);
 
-        // Получаем настройки
-        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        back_button = (ImageButton) findViewById(R.id.back_button);
+
+        // Загружаем изображения темы
+        loadThemeImages();
 
         // Загружаем статистику из настроек
         loadStat();
+    }
+
+    private void loadThemeImages() {
+        if(theme == R.style.WhiteTheme){
+            back_button.setImageResource(R.drawable.ic_arrow_back_black_36dp);
+        }
     }
 
     void loadStat(){

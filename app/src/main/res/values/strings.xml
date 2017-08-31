@@ -12,6 +12,16 @@
     <string name="stat_time_max">Самый трудный выбор</string>
     <string name="stat_time_min">Самый лёгкий выбор</string>
 
+    <!-- Для диалоговых окон -->
+    <string name="help_dialog_message">Комиссия Поклонской ни разу не собиралась для обсуждения деклараций депутатов, чем недовольны даже сами её участники.\n\nСама Поклонская никак это не комментирует. Видимо, у неё есть дела поважнее.</string>
+    <string name="help_dialog_title">Важная информация</string>
+    <string name="help_dialog_negative">Так точно!</string>
+
+    <string name="confirm_dialog_message"></string>
+    <string name="confirm_dialog_title"></string>
+    <string name="ok">ОК</string>
+    <string name="cancel">Отмена</string>
+
     <!-- Заглушки для activity_stat -->
     <string name="stat_time_value">%s сек.</string>
     <string name="stat_per_value">%d%%</string>
@@ -19,4 +29,5 @@
 
     <string name="answered_false">Игроков ответили по-другому</string>
     <string name="answered_true">Игроков ответили также</string>
+    <string name="Themes">Темы</string>
 </resources>

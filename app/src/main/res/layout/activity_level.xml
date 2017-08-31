@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="?colorMain"
             android:onClick="clickTop">
 
             <TextView
@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:alpha="0"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayTop"
                 android:textSize="@dimen/percents_size" />
 
             <TextView
@@ -35,7 +35,7 @@
                 android:layout_marginTop="-8dp"
                 android:alpha="0"
                 android:text="@string/answered_true"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayTop"
                 android:textSize="18sp" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_marginRight="20dp"
                 android:text="Вилкой в глаз"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayTop"
                 android:textSize="20sp" />
 
             <!--
@@ -69,7 +69,7 @@
                 android:layout_marginRight="-2000dp"
                 android:layout_toLeftOf="@id/question_one_per"
                 android:alpha="0"
-                app:lottie_colorFilter="@color/colorSecondaryLight"
+                app:lottie_colorFilter="?colorSecondaryLight"
                 app:lottie_fileName="check_pop.json"
                 app:lottie_scale="0.4" />
 
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/colorSecondaryLight"
+            android:background="?colorSecondaryLight"
             android:onClick="clickBottom">
 
             <TextView
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:alpha="0"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayBot"
                 android:textSize="@dimen/percents_size" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="-8dp"
                 android:alpha="0"
                 android:text="@string/answered_false"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayBot"
                 android:textSize="18sp" />
 
             <TextView
@@ -114,7 +114,7 @@
                 android:layout_marginRight="20dp"
                 android:text="В жопу раз"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="?colorTextPlayBot"
                 android:textSize="20sp" />
 
             <com.airbnb.lottie.LottieAnimationView
@@ -125,7 +125,7 @@
                 android:layout_marginRight="-2000dp"
                 android:layout_toLeftOf="@id/question_two_per"
                 android:alpha="0"
-                app:lottie_colorFilter="@color/colorPrimary"
+                app:lottie_colorFilter="?colorMain"
                 app:lottie_fileName="check_pop.json"
                 app:lottie_scale="0.4" />
 
@@ -141,6 +141,7 @@
         android:textSize="48sp" />
 
     <ImageButton
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -193,7 +194,7 @@
         android:paddingRight="6dp"
         android:paddingTop="12dp"
         android:text="1900"
-        android:textColor="@android:color/black"
+        android:textColor="?colorTextPlayTop"
         android:textSize="24sp" />
 
     <TextView
@@ -205,10 +206,11 @@
         android:paddingLeft="124dp"
         android:paddingTop="12dp"
         android:text="+10"
-        android:textColor="@android:color/black"
+        android:textColor="?colorTextPlayTop"
         android:textSize="24sp" />
 
     <ImageButton
+        android:id="@+id/help_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

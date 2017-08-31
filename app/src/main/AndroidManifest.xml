@@ -19,11 +19,13 @@
         </activity>
 
         <activity android:name=".LevelActivity"
-            android:theme="@style/LevelTheme">
+            android:theme="@style/AppTheme">
 
         </activity>
 
         <activity android:name=".StatActivity" />
+
+        <activity android:name=".ShopActivity" />
 
     </application>
 

@@ -1,19 +1,92 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- THEMES -->
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorMain</item>
+        <item name="colorPrimaryDark">@color/colorMainDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="colorMain">@color/colorMain</item>
+        <item name="colorMainDark">@color/colorMainDark</item>
+
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryLight">@color/colorSecondaryLight</item>
+        <item name="colorSecondaryLighter">@color/colorSecondaryLighter</item>
+
+        <item name="colorTextTitle">@android:color/white</item>
+        <item name="colorTextButton">@android:color/white</item>
+        <item name="colorTextPlayTop">@android:color/black</item>
+        <item name="colorTextPlayBot">@android:color/black</item>
+        <item name="colorTextShadowTitle">@color/colorSecondaryLighter</item>
+        <item name="colorTextShadowButton">@color/colorMain</item>
     </style>
 
-    <style name="LevelTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#000000</item>
+
+        <item name="colorMain">#000000</item>
+        <item name="colorMainDark">#000000</item>
+
+        <item name="colorSecondary">#ffffff</item>
+        <item name="colorSecondaryLight">#ffffff</item>
+        <item name="colorSecondaryLighter">#ffffff</item>
+
+        <item name="colorTextTitle">@android:color/white</item>
+        <item name="colorTextButton">@android:color/black</item>
+        <item name="colorTextPlayTop">@android:color/white</item>
+        <item name="colorTextPlayBot">@android:color/black</item>
+        <item name="colorTextShadowTitle">@android:color/white</item>
+        <item name="colorTextShadowButton">@android:color/black</item>
     </style>
+
+    <style name="WhiteTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="colorAccent">@android:color/black</item>
+
+        <item name="colorMain">@android:color/white</item>
+        <item name="colorMainDark">@android:color/white</item>
+
+        <item name="colorSecondary">@android:color/black</item>
+        <item name="colorSecondaryLight">@android:color/black</item>
+        <item name="colorSecondaryLighter">@android:color/black</item>
+
+        <item name="colorTextTitle">@android:color/black</item>
+        <item name="colorTextButton">@android:color/white</item>
+        <item name="colorTextPlayTop">@android:color/black</item>
+        <item name="colorTextPlayBot">@android:color/white</item>
+        <item name="colorTextShadowTitle">@android:color/black</item>
+        <item name="colorTextShadowButton">@android:color/white</item>
+    </style>
+
+    <style name="FreshTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#00b0ff</item>
+        <item name="colorPrimaryDark">#0091ea</item>
+        <item name="colorAccent">#00b0ff</item>
+
+        <item name="colorMain">#00b0ff</item>
+        <item name="colorMainDark">#0091ea</item>
+
+        <item name="colorSecondary">#00e676</item>
+        <item name="colorSecondaryLight">#69f0ae</item>
+        <item name="colorSecondaryLighter">#b9f6ca</item>
+
+        <item name="colorTextTitle">@android:color/white</item>
+        <item name="colorTextButton">@android:color/white</item>
+        <item name="colorTextPlayTop">@android:color/white</item>
+        <item name="colorTextPlayBot">@android:color/white</item>
+        <item name="colorTextShadowTitle">#b9f6ca</item>
+        <item name="colorTextShadowButton">#00b0ff</item>
+    </style>
+
+    <!-- STYLES -->
 
     <style name="ButtonStyle">
         <item name="android:layout_width">@dimen/button_width</item>
@@ -23,11 +96,12 @@
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:shadowColor">@color/colorPrimary</item>
+
+        <item name="android:textColor">?colorTextButton</item>
+        <item name="android:shadowColor">?attr/colorTextShadowButton</item>
         <item name="android:shadowRadius">1</item>
-        <item name="android:shadowDx">1.5</item>
-        <item name="android:shadowDy">1.5</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
     </style>
 
     <style name="StatItemStyle">
@@ -46,11 +120,11 @@
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">36sp</item>
 
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:shadowColor">@color/colorPrimary</item>
+        <item name="android:textColor">?colorTextButton</item>
+        <item name="android:shadowColor">?colorTextShadowButton</item>
         <item name="android:shadowRadius">1</item>
-        <item name="android:shadowDx">1.5</item>
-        <item name="android:shadowDy">1.5</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
     </style>
 
     <style name="StatTextStyle">
@@ -60,9 +134,7 @@
         <item name="android:layout_marginTop">-10dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">18sp</item>
-
-        <item name="android:textColor">@android:color/white</item>
-
+        <item name="android:textColor">?colorTextButton</item>
     </style>
 
 </resources>
