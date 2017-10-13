@@ -19,18 +19,20 @@
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="1"
-            android:text="@string/Themes"
+            android:text="@string/themes"
             android:textAlignment="center"
             android:textColor="?colorTextTitle"
             android:textSize="42sp" />
 
         <LinearLayout
+            android:id="@+id/button_theme_std"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_selector_standart"
+            android:onClick="clickBuyTheme"
             android:orientation="horizontal">
 
             <Button
@@ -39,6 +41,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="4"
                 android:background="@drawable/button_selector_standart"
+                android:clickable="false"
                 android:shadowColor="@color/colorMain"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -54,36 +57,40 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="150"
+                android:text="@string/theme_cost_std"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/button_theme_black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_selector_black"
+            android:onClick="clickBuyTheme"
             android:orientation="horizontal">
 
             <Button
-            android:layout_width="0dp"
-            android:layout_height="@dimen/button_height"
-            android:layout_gravity="center"
-            android:layout_weight="4"
-            android:background="@drawable/button_selector_black"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:text="Black"
-            android:textAllCaps="false"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:background="@drawable/button_selector_black"
+                android:clickable="false"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="Black"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/buy_button_black"
@@ -91,20 +98,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_black_24dp"
-                android:text="150"
+                android:text="@string/theme_cost_black"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/button_theme_white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_selector_white"
+            android:onClick="clickBuyTheme"
             android:orientation="horizontal">
 
             <Button
@@ -113,6 +123,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="4"
                 android:background="@drawable/button_selector_white"
+                android:clickable="false"
                 android:shadowColor="@android:color/white"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -128,20 +139,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="150"
+                android:text="@string/theme_cost_white"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/button_theme_fresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_selector_fresh"
+            android:onClick="clickBuyTheme"
             android:orientation="horizontal">
 
             <Button
@@ -150,6 +164,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="4"
                 android:background="@drawable/button_selector_fresh"
+                android:clickable="false"
                 android:shadowColor="#00b0ff"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -165,8 +180,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="150"
+                android:text="@string/theme_cost_fresh"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
@@ -193,10 +209,10 @@
         android:id="@+id/shop_coins"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#0000"
         android:layout_alignParentRight="true"
-        android:drawableRight="@drawable/ic_stars_white_24dp"
+        android:background="#0000"
         android:drawablePadding="4dp"
+        android:drawableRight="@drawable/ic_stars_white_24dp"
         android:paddingBottom="6dp"
         android:paddingLeft="6dp"
         android:paddingRight="8dp"

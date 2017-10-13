@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     Intent statIntent;
     Intent shopIntent;
 
+    Integer theme;
+
     @Override   //  Подруб шрифтов
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -71,40 +73,40 @@ public class MainActivity extends AppCompatActivity {
 
         //  Загружаем настройки или создаем новые при первом запуске
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (!mSettings.contains(APP_PREFERENCES_LVL)){
+        if (!mSettings.contains(APP_PREFERENCES_LVL)) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL, 1);
             editor.commit();
         }
 
-        if (!mSettings.contains(APP_PREFERENCES_COINS)){
+        if (!mSettings.contains(APP_PREFERENCES_COINS)) {
             editor = mSettings.edit();
-            editor.putInt(APP_PREFERENCES_COINS, 0);
+            editor.putInt(APP_PREFERENCES_COINS, 1000); // TEST MONEY 1K
             editor.commit();
         }
 
-        if (!mSettings.contains(APP_PREFERENCES_THEME)){
+        if (!mSettings.contains(APP_PREFERENCES_THEME)) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_THEME, R.style.AppTheme);
             editor.commit();
         }
 
-        if (!mSettings.contains(APP_PREFERENCES_THEME_STD)){
+        if (!mSettings.contains(APP_PREFERENCES_THEME_STD)) {
             editor = mSettings.edit();
-            editor.putBoolean(APP_PREFERENCES_THEME_STD, false);
+            editor.putBoolean(APP_PREFERENCES_THEME_STD, true);
             editor.commit();
         }
-        if (!mSettings.contains(APP_PREFERENCES_THEME_BLACK)){
+        if (!mSettings.contains(APP_PREFERENCES_THEME_BLACK)) {
             editor = mSettings.edit();
             editor.putBoolean(APP_PREFERENCES_THEME_BLACK, false);
             editor.commit();
         }
-        if (!mSettings.contains(APP_PREFERENCES_THEME_WHITE)){
+        if (!mSettings.contains(APP_PREFERENCES_THEME_WHITE)) {
             editor = mSettings.edit();
             editor.putBoolean(APP_PREFERENCES_THEME_WHITE, false);
             editor.commit();
         }
-        if (!mSettings.contains(APP_PREFERENCES_THEME_FRESH)){
+        if (!mSettings.contains(APP_PREFERENCES_THEME_FRESH)) {
             editor = mSettings.edit();
             editor.putBoolean(APP_PREFERENCES_THEME_FRESH, false);
             editor.commit();
@@ -129,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         //  Устанавливаем тему, отображаем Activity
-        setTheme(mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme));
+        theme = mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+        setTheme(theme);
         setContentView(R.layout.activity_main);
 
         //  Создаем DataBase с помощью DataBaseHelper
@@ -142,46 +145,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void play(View view){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (theme != mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme)) this.recreate();
+    }
+
+    public void play(View view) {
         playIntent = new Intent(this, LevelActivity.class);
         startActivity(playIntent);
     }
 
-    public void statistic(View view){
+    public void statistic(View view) {
         statIntent = new Intent(this, StatActivity.class);
         startActivity(statIntent);
     }
 
-    public void shop(View view){
+    public void shop(View view) {
         shopIntent = new Intent(this, ShopActivity.class);
         startActivity(shopIntent);
-    }
-
-    public void setStd(View view){
-        editor = mSettings.edit();
-        editor.putInt(APP_PREFERENCES_THEME, R.style.AppTheme);
-        editor.commit();
-        this.recreate();
-    }
-
-    public void setBlack(View view){
-        editor = mSettings.edit();
-        editor.putInt(APP_PREFERENCES_THEME, R.style.BlackTheme);
-        editor.commit();
-        this.recreate();
-    }
-
-    public void setWhite(View view){
-        editor = mSettings.edit();
-        editor.putInt(APP_PREFERENCES_THEME, R.style.WhiteTheme);
-        editor.commit();
-        this.recreate();
-    }
-
-    public void setFresh(View view){
-        editor = mSettings.edit();
-        editor.putInt(APP_PREFERENCES_THEME, R.style.FreshTheme);
-        editor.commit();
-        this.recreate();
     }
 }

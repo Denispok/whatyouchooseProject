@@ -10,10 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.airbnb.lottie.L;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -29,6 +26,9 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_WHI
 public class ShopActivity extends AppCompatActivity {
 
     private static final Integer THEME_COST_STD = 100;
+    private static final Integer THEME_COST_BLACK = 100;
+    private static final Integer THEME_COST_WHITE = 100;
+    private static final Integer THEME_COST_FRESH = 100;
 
     Integer theme;
     Integer coins;
@@ -38,8 +38,11 @@ public class ShopActivity extends AppCompatActivity {
     TextView shop_coins;
 
     AlertDialog confirmDialog;
+    AlertDialog dontEnoughCoinsDialog;
+    String confirmDialogMessage;
 
     SharedPreferences mSettings;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -75,86 +78,204 @@ public class ShopActivity extends AppCompatActivity {
         shop_coins = (TextView) findViewById(R.id.shop_coins);
 
         //  Обновляем количество монет
-        refresh_coins();
+        refreshCoins();
 
         //  Удаление кнопок купленных тем
-        check_purchased_themes();
+        checkPurchasedThemes();
 
         // Загружаем изображения темы
         loadThemeImages();
 
         //  Загружаем диалоговое окно с подтверждением покупки темы
-        loadAlertDialog();
+        loadAlertDialogs();
     }
 
-    private void refresh_coins() {
+    private void refreshCoins() {
         coins = mSettings.getInt(APP_PREFERENCES_COINS, 0);
         shop_coins.setText(coins.toString());
     }
 
-    private void check_purchased_themes() {
-        if(mSettings.getBoolean(APP_PREFERENCES_THEME_STD, false)){
+    private void checkPurchasedThemes() {
+        if (mSettings.getBoolean(APP_PREFERENCES_THEME_STD, false)) {
             findViewById(R.id.buy_button_std).setVisibility(View.GONE);
         }
-        if(mSettings.getBoolean(APP_PREFERENCES_THEME_BLACK, false)){
+        if (mSettings.getBoolean(APP_PREFERENCES_THEME_BLACK, false)) {
             findViewById(R.id.buy_button_black).setVisibility(View.GONE);
         }
-        if(mSettings.getBoolean(APP_PREFERENCES_THEME_WHITE, false)){
+        if (mSettings.getBoolean(APP_PREFERENCES_THEME_WHITE, false)) {
             findViewById(R.id.buy_button_white).setVisibility(View.GONE);
         }
-        if(mSettings.getBoolean(APP_PREFERENCES_THEME_FRESH, false)){
+        if (mSettings.getBoolean(APP_PREFERENCES_THEME_FRESH, false)) {
             findViewById(R.id.buy_button_fresh).setVisibility(View.GONE);
         }
     }
 
     private void loadThemeImages() {
-        if(theme == R.style.WhiteTheme){
+        if (theme == R.style.WhiteTheme) {
             back_button.setImageResource(R.drawable.ic_arrow_back_black_36dp);
             shop_coins.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_stars_black_24dp), null, null, null);
         }
     }
 
-    private void loadAlertDialog(){
+    private void loadAlertDialogs() {
+        //                      CONFIRM DIALOG
+
         // 1. Instantiate an AlertDialog.Builder with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(this);
 
         // 2. Chain together various setter methods to set the dialog characteristics
-        builder.setMessage(R.string.confirm_dialog_message)
-                .setTitle(R.string.confirm_dialog_title);
+        confirmBuilder.setTitle("");
 
         // Add the buttons
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        confirmBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
-                switch (clicked_buy_button_id){
+
+                switch (clicked_buy_button_id) {
+                    case R.id.button_theme_std:
+                        editor = mSettings.edit();
+                        editor.putInt(APP_PREFERENCES_COINS, coins - THEME_COST_STD);
+                        editor.putBoolean(APP_PREFERENCES_THEME_STD, true);
+                        editor.commit();
+                        setStd();
+                        break;
+
+                    case R.id.button_theme_black:
+                        editor = mSettings.edit();
+                        editor.putInt(APP_PREFERENCES_COINS, coins - THEME_COST_BLACK);
+                        editor.putBoolean(APP_PREFERENCES_THEME_BLACK, true);
+                        editor.commit();
+                        setBlack();
+                        break;
+
+                    case R.id.button_theme_white:
+                        editor = mSettings.edit();
+                        editor.putInt(APP_PREFERENCES_COINS, coins - THEME_COST_WHITE);
+                        editor.putBoolean(APP_PREFERENCES_THEME_WHITE, true);
+                        editor.commit();
+                        setWhite();
+                        break;
+
+                    case R.id.button_theme_fresh:
+                        editor = mSettings.edit();
+                        editor.putInt(APP_PREFERENCES_COINS, coins - THEME_COST_FRESH);
+                        editor.putBoolean(APP_PREFERENCES_THEME_FRESH, true);
+                        editor.commit();
+                        setFresh();
+                        break;
 
                 }
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        confirmBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
             }
         });
 
         // 3. Get the AlertDialog from create()
-        confirmDialog = builder.create();
+        confirmDialog = confirmBuilder.create();
+
+        //                      DONT ENOUGH COINS DIALOG
+
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder coinsBuilder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        coinsBuilder.setTitle(R.string.dont_enough_coins_dialog_title);
+
+        // Add the buttons
+        coinsBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+
+
+        // 3. Get the AlertDialog from create()
+        dontEnoughCoinsDialog = coinsBuilder.create();
     }
 
     public void clickBuyTheme(View view) {
         clicked_buy_button_id = view.getId();
 
-        switch (clicked_buy_button_id){
-            case R.id.buy_button_std:
-                if (coins >= THEME_COST_STD){
-                    confirmDialog.show();
-                } else {
-                    // СОЗДАТЬ ТОСТ С НАДПИСЬЮ НЕДОСТАТОЧНО СРЕДСТВ
+        switch (clicked_buy_button_id) {
+            case R.id.button_theme_std:
+                if (theme != R.style.AppTheme) {    // if theme already present do nothing
+                    if (mSettings.getBoolean(APP_PREFERENCES_THEME_STD, true)) setStd();
+                    else if (coins >= THEME_COST_STD) {
+                        confirmDialogMessage = String.format(getString(R.string.confirm_dialog_title), "Std", THEME_COST_STD);
+                        confirmDialog.setTitle(confirmDialogMessage);
+                        confirmDialog.show();
+                    } else dontEnoughCoinsDialog.show();
+                    ; // SHOW YOU DON'T HAVE ENOUGH COINS DIALOG
                 }
+                break;
+
+            case R.id.button_theme_black:
+                if (theme != R.style.BlackTheme) {    // if theme already present do nothing
+                    if (mSettings.getBoolean(APP_PREFERENCES_THEME_BLACK, true)) setBlack();
+                    else if (coins >= THEME_COST_BLACK) {
+                        confirmDialogMessage = getString(R.string.confirm_dialog_title, "Black", THEME_COST_BLACK);
+                        confirmDialog.setTitle(confirmDialogMessage);
+                        confirmDialog.show();
+                    } else dontEnoughCoinsDialog.show(); // SHOW YOU DON'T HAVE ENOUGH COINS DIALOG
+                }
+                break;
+
+            case R.id.button_theme_white:
+                if (theme != R.style.WhiteTheme) {    // if theme already present do nothing
+                    if (mSettings.getBoolean(APP_PREFERENCES_THEME_WHITE, true)) setWhite();
+                    else if (coins >= THEME_COST_WHITE) {
+                        confirmDialogMessage = getString(R.string.confirm_dialog_title, "White", THEME_COST_WHITE);
+                        confirmDialog.setTitle(confirmDialogMessage);
+                        confirmDialog.show();
+                    } else dontEnoughCoinsDialog.show(); // SHOW YOU DON'T HAVE ENOUGH COINS DIALOG
+                }
+                break;
+
+            case R.id.button_theme_fresh:
+                if (theme != R.style.FreshTheme) {    // if theme already present do nothing
+                    if (mSettings.getBoolean(APP_PREFERENCES_THEME_FRESH, true)) setFresh();
+                    else if (coins >= THEME_COST_FRESH) {
+                        confirmDialogMessage = getString(R.string.confirm_dialog_title, "Fresh", THEME_COST_FRESH);
+                        confirmDialog.setTitle(confirmDialogMessage);
+                        confirmDialog.show();
+                    } else dontEnoughCoinsDialog.show(); // SHOW YOU DON'T HAVE ENOUGH COINS DIALOG
+                }
+                break;
         }
     }
 
-    public void clickBack(View view){
+    public void setStd() {
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.AppTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setBlack() {
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.BlackTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setWhite() {
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.WhiteTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void setFresh() {
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_THEME, R.style.FreshTheme);
+        editor.commit();
+        this.recreate();
+    }
+
+    public void clickBack(View view) {
         this.onBackPressed();
     }
 
