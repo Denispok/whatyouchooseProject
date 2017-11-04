@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES = "settings";
     public static final String APP_PREFERENCES_THEME = "theme";
     public static final String APP_PREFERENCES_LVL = "level";   //  Текущий уровень
+    public static final String APP_PREFERENCES_LVL_SKIPPED = "level_skipped";   //  Текущий уровень
     public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
                                                         (т.е. выбирал как такой-то процент людей */
     public static final String APP_PREFERENCES_PER_MOST = "percent_most"; // самый неуникальный выбор
@@ -76,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
         if (!mSettings.contains(APP_PREFERENCES_LVL)) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL, 1);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_LVL_SKIPPED)) {
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_LVL_SKIPPED, 0);
             editor.commit();
         }
 

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +27,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_SKIPPED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_MOST;
@@ -93,6 +95,7 @@ public class LevelActivity extends AppCompatActivity {
     Animation.AnimationListener appear_anim_listener;
 
     AlertDialog helpDialog;
+    AlertDialog coinsDialog;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -158,6 +161,9 @@ public class LevelActivity extends AppCompatActivity {
         //  Загружаем диалоговое окно с инфой
         loadHelpDialog();
 
+        //  Загружаем диалоговое окно с покупками
+        loadCoinsDialog();
+
         //  Начинаем отсчет времени уровня
         level_time = System.currentTimeMillis();
 
@@ -166,14 +172,14 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     private void loadThemeImages() {
-        if(theme == R.style.BlackTheme || theme == R.style.FreshTheme){
+        if (theme == R.style.BlackTheme || theme == R.style.FreshTheme) {
             back_button.setImageResource(R.drawable.ic_arrow_back_white_36dp);
             level_coins.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_stars_white_24dp), null, null, null);
             help_button.setImageResource(R.drawable.ic_help_outline_white_36dp);
         }
     }
 
-    public void loadAnimation(){
+    public void loadAnimation() {
 
         //  Анимация коинов
         disappear_coins_anim_listener = new Animation.AnimationListener() {
@@ -224,7 +230,7 @@ public class LevelActivity extends AppCompatActivity {
                 top_choice.setClickable(false);
                 bot_choice.setClickable(false);
 
-                if(choice.equals("top")){
+                if (choice.equals("top")) {
                     check_top.setAlpha(0.8f);
                     check_top.startAnimation(check_anim_top);
                     check_bot.setAlpha(0f);
@@ -240,7 +246,7 @@ public class LevelActivity extends AppCompatActivity {
                 top_choice.setClickable(true);
                 bot_choice.setClickable(true);
 
-                if(choice.equals("top")){
+                if (choice.equals("top")) {
                     check_top.playAnimation();
                 } else {
                     check_bot.playAnimation();
@@ -342,7 +348,7 @@ public class LevelActivity extends AppCompatActivity {
         appear_anim.setAnimationListener(appear_anim_listener);
     }
 
-    public void loadHelpDialog(){
+    public void loadHelpDialog() {
         // 1. Instantiate an AlertDialog.Builder with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -360,7 +366,22 @@ public class LevelActivity extends AppCompatActivity {
         helpDialog = builder.create();
     }
 
-    public void loadLevel(){
+    public void loadCoinsDialog() {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Get the layout inflater
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(inflater.inflate(R.layout.dialog_coins, null));
+
+        // 3. Get the AlertDialog from create()
+        coinsDialog = builder.create();
+    }
+
+    public void loadLevel() {
         //  Изначальное состояние = 0 (не возбужденное)
         state = false;
 
@@ -405,8 +426,8 @@ public class LevelActivity extends AppCompatActivity {
         cursor.moveToNext();
     }
 
-    public void clickTop(View view){
-        if (!state){
+    public void clickTop(View view) {
+        if (!state) {
 
             choice = "top";
             choice_per = top_percent;
@@ -421,8 +442,8 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void clickBottom(View view){
-        if (!state){
+    public void clickBottom(View view) {
+        if (!state) {
 
             choice = "bottom";
             choice_per = bot_percent;
@@ -437,7 +458,7 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void endCurrentLevel(){
+    public void endCurrentLevel() {
         /*  Запуск анимации исчезновения + анимации с listener'ом, ответственной за loadLevel()
                                                                     и запуск анимации появления */
         question_one.startAnimation(disappear_anim_with_listener);
@@ -447,14 +468,14 @@ public class LevelActivity extends AppCompatActivity {
         answered_top.startAnimation(disappear_anim);
         answered_bot.startAnimation(disappear_anim);
 
-        if(choice.equals("top")){
+        if (choice.equals("top")) {
             check_top.startAnimation(disappear_anim);
         } else {
             check_bot.startAnimation(disappear_anim);
         }
     }
 
-    public void toExcitingState(){
+    public void toExcitingState() {
         //  Запуск анимации
         level_coins.startAnimation(disappear_coins_anim);
         level_coins_add.setAlpha(1.0f);
@@ -479,24 +500,18 @@ public class LevelActivity extends AppCompatActivity {
         saveStatistic();
 
         //  DEBUG TOAST
-       // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
 
-        // DEBUG STRING START
-        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11){
-            editor = mSettings.edit();
-            editor.putInt(APP_PREFERENCES_LVL, 1);
-            editor.commit();
-        }
-        // DEBUG END
+        debugEndLevel();
 
         state = true;
     }
 
-    public void saveStatistic(){
+    public void saveStatistic() {
         editor = mSettings.edit();
 
         // Инициализация статистики в Preferences на 1 уровне
-        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 1) {
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 1 || mSettings.getInt(APP_PREFERENCES_PER_LESS, 0) == 0) {
             editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(level_time / 10f) / 100f);
@@ -513,19 +528,19 @@ public class LevelActivity extends AppCompatActivity {
                 editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             }
 
-            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
-                    + Math.round(level_time / 10f) / 100f) / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f);
+            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
+                    + Math.round(level_time / 10f) / 100f) / (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
 
-            if (choice_per > mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)){
+            if (choice_per > mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)) {
                 editor.putInt(APP_PREFERENCES_PER_MOST, choice_per);
             }
 
-            if (choice_per < mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)){
+            if (choice_per < mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)) {
                 editor.putInt(APP_PREFERENCES_PER_LESS, choice_per);
             }
 
-            editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - 1)
-                    + choice_per) / mSettings.getInt(APP_PREFERENCES_LVL, 0)) * 100f) / 100f);
+            editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
+                    + choice_per) / (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
         }
 
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
@@ -534,15 +549,57 @@ public class LevelActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void clickBack(View view){
+    public void clickBack(View view) {
         this.onBackPressed();
     }
 
-    public void clickCoins(View view){
-
+    public void clickCoins(View view) {
+        coinsDialog.show();
     }
 
-    public void clickHelp(View view){
+    public void clickHelp(View view) {
         helpDialog.show();
+    }
+
+    public void skipForCoins(View view) {
+        if (!state && coins >= 100) {
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_COINS, coins - 100);
+            editor.apply();
+
+            skipLevel();
+            coinsDialog.cancel();
+        }
+    }
+
+    public void skipForAds(View view) {
+        if (!state) {
+            skipLevel();
+            coinsDialog.cancel();
+        }
+    }
+
+    public void skipLevel() {
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
+        editor.putInt(APP_PREFERENCES_LVL_SKIPPED, mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) + 1);
+        editor.apply();
+
+        debugEndLevel();
+
+        loadLevel();
+
+        //  Начинаем новый отсчет времени уровня
+        level_time = System.currentTimeMillis();
+    }
+
+    // DEBUG FUNCTION WHICH STARTS LEVELS AGAIN WHEN LEVELS ENDS
+    public void debugEndLevel() {
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11) {
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_LVL, 1);
+            editor.putInt(APP_PREFERENCES_LVL_SKIPPED, 0);
+            editor.commit();
+        }
     }
 }
