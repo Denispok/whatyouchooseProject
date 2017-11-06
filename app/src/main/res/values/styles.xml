@@ -18,6 +18,7 @@
         <item name="colorTextTitle">@android:color/white</item>
         <item name="colorTextButton">@android:color/white</item>
         <item name="colorTextPlayTop">@android:color/black</item>
+        <item name="colorQuestion">#87000000</item>
         <item name="colorTextPlayBot">@android:color/black</item>
         <item name="colorTextShadowTitle">@color/colorSecondaryLighter</item>
         <item name="colorTextShadowButton">@color/colorMain</item>
@@ -39,6 +40,7 @@
         <item name="colorTextTitle">@android:color/white</item>
         <item name="colorTextButton">@android:color/black</item>
         <item name="colorTextPlayTop">@android:color/white</item>
+        <item name="colorQuestion">#91b1b1b1</item>
         <item name="colorTextPlayBot">@android:color/black</item>
         <item name="colorTextShadowTitle">@android:color/white</item>
         <item name="colorTextShadowButton">@android:color/black</item>
@@ -60,6 +62,7 @@
         <item name="colorTextTitle">@android:color/black</item>
         <item name="colorTextButton">@android:color/white</item>
         <item name="colorTextPlayTop">@android:color/black</item>
+        <item name="colorQuestion">#91b1b1b1</item>
         <item name="colorTextPlayBot">@android:color/white</item>
         <item name="colorTextShadowTitle">@android:color/black</item>
         <item name="colorTextShadowButton">@android:color/white</item>
@@ -81,6 +84,7 @@
         <item name="colorTextTitle">@android:color/white</item>
         <item name="colorTextButton">@android:color/white</item>
         <item name="colorTextPlayTop">@android:color/white</item>
+        <item name="colorQuestion">#aaffffff</item>
         <item name="colorTextPlayBot">@android:color/white</item>
         <item name="colorTextShadowTitle">#b9f6ca</item>
         <item name="colorTextShadowButton">#00b0ff</item>

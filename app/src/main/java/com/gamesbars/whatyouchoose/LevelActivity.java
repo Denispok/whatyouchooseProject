@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,11 +23,14 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import java.util.concurrent.TimeUnit;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_FIRST_COINS_TOUCH;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_SKIPPED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
@@ -169,6 +174,10 @@ public class LevelActivity extends AppCompatActivity {
 
         //  Загружаем уровень
         loadLevel();
+
+        //  Если не было первого нажатия на level_coins, то запускает его подсветку
+        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true))
+            coinsAlertStarter();
     }
 
     private void loadThemeImages() {
@@ -179,7 +188,7 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void loadAnimation() {
+    private void loadAnimation() {
 
         //  Анимация коинов
         disappear_coins_anim_listener = new Animation.AnimationListener() {
@@ -348,7 +357,7 @@ public class LevelActivity extends AppCompatActivity {
         appear_anim.setAnimationListener(appear_anim_listener);
     }
 
-    public void loadHelpDialog() {
+    private void loadHelpDialog() {
         // 1. Instantiate an AlertDialog.Builder with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -366,7 +375,7 @@ public class LevelActivity extends AppCompatActivity {
         helpDialog = builder.create();
     }
 
-    public void loadCoinsDialog() {
+    private void loadCoinsDialog() {
         // 1. Instantiate an AlertDialog.Builder with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -381,7 +390,7 @@ public class LevelActivity extends AppCompatActivity {
         coinsDialog = builder.create();
     }
 
-    public void loadLevel() {
+    private void loadLevel() {
         //  Изначальное состояние = 0 (не возбужденное)
         state = false;
 
@@ -408,7 +417,58 @@ public class LevelActivity extends AppCompatActivity {
         myDb.close();
     }
 
-    public void openDB() {
+    private void coinsAlertStarter() {
+        class CoinsStarterTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                new CoinsAlertTask().execute();
+            }
+        }
+
+        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true))
+            new CoinsStarterTask().execute();
+    }
+
+    private class CoinsAlertTask extends AsyncTask<Void, Void, Void> {
+        TransitionDrawable transition = (TransitionDrawable) level_coins.getBackground();
+        ;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            transition.startTransition(750);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            transition.reverseTransition(750);
+            coinsAlertStarter();
+        }
+    }
+
+    private void openDB() {
         myDbHelper = new DataBaseHelper(this);
         try {
             myDbHelper.openDataBase();
@@ -458,7 +518,7 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void endCurrentLevel() {
+    private void endCurrentLevel() {
         /*  Запуск анимации исчезновения + анимации с listener'ом, ответственной за loadLevel()
                                                                     и запуск анимации появления */
         question_one.startAnimation(disappear_anim_with_listener);
@@ -475,7 +535,7 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void toExcitingState() {
+    private void toExcitingState() {
         //  Запуск анимации
         level_coins.startAnimation(disappear_coins_anim);
         level_coins_add.setAlpha(1.0f);
@@ -507,7 +567,7 @@ public class LevelActivity extends AppCompatActivity {
         state = true;
     }
 
-    public void saveStatistic() {
+    private void saveStatistic() {
         editor = mSettings.edit();
 
         // Инициализация статистики в Preferences на 1 уровне
@@ -554,6 +614,11 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     public void clickCoins(View view) {
+        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true)){
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true);
+            editor.apply();
+        }
         coinsDialog.show();
     }
 
@@ -579,7 +644,7 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void skipLevel() {
+    private void skipLevel() {
         editor = mSettings.edit();
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
         editor.putInt(APP_PREFERENCES_LVL_SKIPPED, mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) + 1);
@@ -594,7 +659,7 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     // DEBUG FUNCTION WHICH STARTS LEVELS AGAIN WHEN LEVELS ENDS
-    public void debugEndLevel() {
+    private void debugEndLevel() {
         if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL, 1);

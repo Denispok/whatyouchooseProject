@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_TIME_AVER = "time_average"; // среднее время выбора
     public static final String APP_PREFERENCES_TIME_MIN = "time_min";      // min время выбора
     public static final String APP_PREFERENCES_COINS = "coins";      // монеты
+    public static final String APP_PREFERENCES_FIRST_COINS_TOUCH = "first_coins_touch"; /* было ли
+                                                                        первое нажатие на coins_level*/
 
     public static final String APP_PREFERENCES_THEME_STD = "theme_std"; // куплена ли стандартная тема
     public static final String APP_PREFERENCES_THEME_BLACK = "theme_black"; // куплена ли черная тема
@@ -89,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
         if (!mSettings.contains(APP_PREFERENCES_COINS)) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_COINS, 1000); // TEST MONEY 1K
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_FIRST_COINS_TOUCH)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, false); // TEST MONEY 1K
             editor.commit();
         }
 

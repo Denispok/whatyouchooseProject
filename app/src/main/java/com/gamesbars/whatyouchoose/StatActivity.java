@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -88,22 +90,34 @@ public class StatActivity extends AppCompatActivity {
     }
 
     private void loadThemeImages() {
-        if(theme == R.style.WhiteTheme){
+        if (theme == R.style.WhiteTheme) {
             back_button.setImageResource(R.drawable.ic_arrow_back_black_36dp);
         }
     }
 
-    void loadStat(){
-        stat_per_aver.setText(String.format(getString(R.string.stat_per_aver), String.valueOf(mSettings.getFloat(APP_PREFERENCES_PER, 0))));
+    void loadStat() {
         stat_count.setText(String.valueOf(mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1));
-        stat_time_aver.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0))));
+        stat_per_aver.setText(String.format(getString(R.string.stat_per_aver), String.valueOf(mSettings.getFloat(APP_PREFERENCES_PER, 0))));
         stat_per_min.setText(String.format(getString(R.string.stat_per_value), mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)));
         stat_per_max.setText(String.format(getString(R.string.stat_per_value), mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)));
-        stat_time_min.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0))));
-        stat_time_max.setText(String.format(getString(R.string.stat_time_value), String.valueOf(mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0))));
+
+        if (mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) >= 1)
+            stat_time_aver.setText(String.format(Locale.US, "%.1f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)));
+        else
+            stat_time_aver.setText(String.format(Locale.US, "%.2f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)));
+
+        if (mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0) >= 1)
+            stat_time_min.setText(String.format(Locale.US, "%.1f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0)));
+        else
+            stat_time_min.setText(String.format(Locale.US, "%.2f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_MIN, 0)));
+
+        if (mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0) >= 1)
+            stat_time_max.setText(String.format(Locale.US, "%.1f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0)));
+        else
+            stat_time_max.setText(String.format(Locale.US, "%.2f сек.", mSettings.getFloat(APP_PREFERENCES_TIME_MAX, 0)));
     }
 
-    public void clickBack(View view){
+    public void clickBack(View view) {
         this.onBackPressed();
     }
 

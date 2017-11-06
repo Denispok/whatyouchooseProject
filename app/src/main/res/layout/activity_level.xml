@@ -137,8 +137,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:paddingTop="4dp"
+        android:shadowColor="#ffffff"
+        android:shadowRadius="2"
         android:text="\?"
-        android:textSize="48sp" />
+        android:textColor="?colorQuestion"
+        android:textSize="58sp" />
 
     <ImageButton
         android:id="@+id/back_button"
@@ -185,7 +189,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="#0000"
+        android:background="@drawable/coins_button_transition"
         android:drawableLeft="@drawable/ic_stars_black_24dp"
         android:drawablePadding="4dp"
         android:onClick="clickCoins"

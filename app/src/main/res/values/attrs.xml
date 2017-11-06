@@ -10,6 +10,7 @@
     <attr name="colorTextTitle" format="reference|color" />
     <attr name="colorTextButton" format="reference|color" />
     <attr name="colorTextPlayTop" format="reference|color" />
+    <attr name="colorQuestion" format="reference|color" />
     <attr name="colorTextPlayBot" format="reference|color" />
     <attr name="colorTextShadowTitle" format="reference|color" />
     <attr name="colorTextShadowButton" format="reference|color" />
