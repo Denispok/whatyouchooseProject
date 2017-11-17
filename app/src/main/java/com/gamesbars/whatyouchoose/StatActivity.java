@@ -2,6 +2,7 @@ package com.gamesbars.whatyouchoose;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -85,6 +86,33 @@ public class StatActivity extends AppCompatActivity {
         // Загружаем изображения темы
         loadThemeImages();
 
+        //  Устанавливаем button_selector темы на Buttons backgrounds
+        Drawable stat_item_drawable = null;
+        switch (theme) {
+            case R.style.AppTheme:
+                stat_item_drawable = getResources().getDrawable(R.drawable.button_selector_standart);
+                stat_per_aver.setBackground(getResources().getDrawable(R.drawable.button_selector_standart));
+                break;
+            case R.style.BlackTheme:
+                stat_item_drawable = getResources().getDrawable(R.drawable.button_selector_black);
+                stat_per_aver.setBackground(getResources().getDrawable(R.drawable.button_selector_black));
+                break;
+            case R.style.WhiteTheme:
+                stat_item_drawable = getResources().getDrawable(R.drawable.button_selector_white);
+                stat_per_aver.setBackground(getResources().getDrawable(R.drawable.button_selector_white));
+                break;
+            case R.style.FreshTheme:
+                stat_item_drawable = getResources().getDrawable(R.drawable.button_selector_fresh);
+                stat_per_aver.setBackground(getResources().getDrawable(R.drawable.button_selector_fresh));
+                break;
+        }
+        findViewById(R.id.stat_count_item).setBackground(stat_item_drawable);
+        findViewById(R.id.stat_per_aver_item).setBackground(stat_item_drawable);
+        findViewById(R.id.stat_per_min_item).setBackground(stat_item_drawable);
+        findViewById(R.id.stat_per_max_item).setBackground(stat_item_drawable);
+        findViewById(R.id.stat_time_max_item).setBackground(stat_item_drawable);
+        findViewById(R.id.stat_time_min_item).setBackground(stat_item_drawable);
+
         // Загружаем статистику из настроек
         loadStat();
     }
@@ -122,3 +150,4 @@ public class StatActivity extends AppCompatActivity {
     }
 
 }
+

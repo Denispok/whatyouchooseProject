@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -50,29 +49,6 @@
                 android:textColor="?colorTextPlayTop"
                 android:textSize="20sp" />
 
-            <!--
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:alpha="0.6"
-                android:src="@drawable/ic_check_circle_black_24dp" />
-            -->
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/check_top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="-2000dp"
-                android:layout_toLeftOf="@id/question_one_per"
-                android:alpha="0"
-                app:lottie_colorFilter="?colorSecondaryLight"
-                app:lottie_fileName="check_pop.json"
-                app:lottie_scale="0.4" />
-
         </RelativeLayout>
 
 
@@ -117,18 +93,6 @@
                 android:textColor="?colorTextPlayBot"
                 android:textSize="20sp" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/check_bot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="-2000dp"
-                android:layout_toLeftOf="@id/question_two_per"
-                android:alpha="0"
-                app:lottie_colorFilter="?colorMain"
-                app:lottie_fileName="check_pop.json"
-                app:lottie_scale="0.4" />
-
         </RelativeLayout>
 
     </LinearLayout>
@@ -140,7 +104,7 @@
         android:paddingTop="4dp"
         android:shadowColor="#ffffff"
         android:shadowRadius="2"
-        android:text="\?"
+        android:text="@string/question"
         android:textColor="?colorQuestion"
         android:textSize="58sp" />
 
@@ -148,14 +112,14 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="#0000"
         android:onClick="clickBack"
         android:paddingBottom="6dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="6dp"
+        android:paddingEnd="6dp"
+        android:paddingStart="8dp"
         android:paddingTop="10dp"
         android:src="@drawable/ic_arrow_back_black_36dp" />
 
@@ -221,8 +185,8 @@
         android:background="#0000"
         android:onClick="clickHelp"
         android:paddingBottom="6dp"
-        android:paddingLeft="6dp"
-        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingStart="6dp"
         android:paddingTop="9dp"
         android:src="@drawable/ic_help_outline_black_36dp" />
 

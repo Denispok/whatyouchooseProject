@@ -208,7 +208,6 @@ public class ShopActivity extends AppCompatActivity {
                         confirmDialog.setTitle(confirmDialogMessage);
                         confirmDialog.show();
                     } else dontEnoughCoinsDialog.show();
-                    ; // SHOW YOU DON'T HAVE ENOUGH COINS DIALOG
                 }
                 break;
 
@@ -280,3 +279,4 @@ public class ShopActivity extends AppCompatActivity {
     }
 
 }
+

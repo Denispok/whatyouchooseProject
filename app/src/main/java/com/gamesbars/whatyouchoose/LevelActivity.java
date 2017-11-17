@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,8 +21,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -75,11 +74,6 @@ public class LevelActivity extends AppCompatActivity {
     TextView question_two_per;
     TextView answered_top;
     TextView answered_bot;
-
-    LottieAnimationView check_top;
-    LottieAnimationView check_bot;
-    Animation check_anim_top;
-    Animation check_anim_bot;
 
     Animation appear_coins_anim;
     Animation disappear_coins_anim;
@@ -154,9 +148,6 @@ public class LevelActivity extends AppCompatActivity {
         answered_top = (TextView) findViewById(R.id.answered_top);
         answered_bot = (TextView) findViewById(R.id.answered_bot);
 
-        check_top = (LottieAnimationView) findViewById(R.id.check_top);
-        check_bot = (LottieAnimationView) findViewById(R.id.check_bot);
-
         // Загружаем изображения темы
         loadThemeImages();
 
@@ -220,13 +211,6 @@ public class LevelActivity extends AppCompatActivity {
         coins_add_anim = AnimationUtils.loadAnimation(this, R.anim.coins_add_anim);
         coins_add_anim.setFillAfter(true);
 
-        //  Check anims
-        check_anim_top = AnimationUtils.loadAnimation(this, R.anim.check_anim_top);
-        check_anim_top.setFillAfter(true);
-
-        check_anim_bot = AnimationUtils.loadAnimation(this, R.anim.check_anim_bot);
-        check_anim_bot.setFillAfter(true);
-
         //  Анимация процентов
         percents_anim_listener = new Animation.AnimationListener() {
             @Override
@@ -238,28 +222,12 @@ public class LevelActivity extends AppCompatActivity {
 
                 top_choice.setClickable(false);
                 bot_choice.setClickable(false);
-
-                if (choice.equals("top")) {
-                    check_top.setAlpha(0.8f);
-                    check_top.startAnimation(check_anim_top);
-                    check_bot.setAlpha(0f);
-                } else {
-                    check_bot.setAlpha(0.8f);
-                    check_bot.startAnimation(check_anim_bot);
-                    check_top.setAlpha(0f);
-                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 top_choice.setClickable(true);
                 bot_choice.setClickable(true);
-
-                if (choice.equals("top")) {
-                    check_top.playAnimation();
-                } else {
-                    check_bot.playAnimation();
-                }
             }
 
             @Override
@@ -480,7 +448,7 @@ public class LevelActivity extends AppCompatActivity {
 
         cursor = myDb.query(TABLE_QUESTIONS_NAME, new String[]{KEY_QUESTION_ONE, KEY_QUESTION_TWO,
                         KEY_QUESTION_ONE_PERCENTAGE, KEY_QUESTION_TWO_PERCENTAGE},
-                "_id = " + Integer.toString(mSettings.getInt(APP_PREFERENCES_LVL, 0)), null,
+                "rowid = " + Integer.toString(mSettings.getInt(APP_PREFERENCES_LVL, 0)), null,
                 null, null, null);
 
         cursor.moveToNext();
@@ -527,12 +495,6 @@ public class LevelActivity extends AppCompatActivity {
         question_two_per.startAnimation(disappear_anim);
         answered_top.startAnimation(disappear_anim);
         answered_bot.startAnimation(disappear_anim);
-
-        if (choice.equals("top")) {
-            check_top.startAnimation(disappear_anim);
-        } else {
-            check_bot.startAnimation(disappear_anim);
-        }
     }
 
     private void toExcitingState() {
@@ -614,12 +576,31 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     public void clickCoins(View view) {
-        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true)){
+        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true)) {
             editor = mSettings.edit();
             editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true);
             editor.apply();
         }
         coinsDialog.show();
+        //  Устанавливаем button_selector темы на Buttons backgrounds
+        Drawable button_drawable = null;
+        switch (theme) {
+            case R.style.AppTheme:
+                button_drawable = getResources().getDrawable(R.drawable.button_selector_standart);
+                break;
+            case R.style.BlackTheme:
+                button_drawable = getResources().getDrawable(R.drawable.button_selector_black);
+                break;
+            case R.style.WhiteTheme:
+                button_drawable = getResources().getDrawable(R.drawable.button_selector_white);
+                break;
+            case R.style.FreshTheme:
+                button_drawable = getResources().getDrawable(R.drawable.button_selector_fresh);
+                break;
+        }
+        coinsDialog.findViewById(R.id.skip_for_coins_button).setBackground(button_drawable);
+        coinsDialog.findViewById(R.id.skip_for_ads_button).setBackground(button_drawable);
+        coinsDialog.findViewById(R.id.remove_ad_button).setBackground(button_drawable);
     }
 
     public void clickHelp(View view) {

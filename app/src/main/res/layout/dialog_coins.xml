@@ -6,27 +6,30 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/skip_for_coins_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:onClick="skipForCoins"
         android:padding="8dp"
-        android:text="Пропустить уровень за 100 монет" />
+        android:text="@string/skip_lvl_coins" />
 
     <Button
+        android:id="@+id/skip_for_ads_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Пропустить уровень за рекламу" />
+        android:text="@string/skip_lvl_ads" />
 
     <Button
+        android:id="@+id/remove_ad_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:padding="8dp"
-        android:text="Отключить рекламу и получить 1000 монет" />
+        android:text="@string/remove_ads" />
 
 </LinearLayout>

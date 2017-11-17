@@ -3,11 +3,13 @@ package com.gamesbars.whatyouchoose;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import java.io.IOException;
 
@@ -149,6 +151,18 @@ public class MainActivity extends AppCompatActivity {
         theme = mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme);
         setTheme(theme);
         setContentView(R.layout.activity_main);
+
+        //  Устанавливаем button_selector темы на Buttons backgrounds
+        Drawable button_drawable = null;
+        switch (theme) {
+            case R.style.AppTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_standart); break;
+            case R.style.BlackTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_black); break;
+            case R.style.WhiteTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_white); break;
+            case R.style.FreshTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_fresh); break;
+        }
+        findViewById(R.id.choose_button).setBackground(button_drawable);
+        findViewById(R.id.stat_button).setBackground(button_drawable);
+        findViewById(R.id.shop_button).setBackground(button_drawable);
 
         //  Создаем DataBase с помощью DataBaseHelper
         myDbHelper = new DataBaseHelper(this);

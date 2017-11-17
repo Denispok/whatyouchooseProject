@@ -2,6 +2,8 @@
     <string name="app_name">Что ты выберешь?</string>
     <string name="choose">Выбирать</string>
     <string name="statistic">Статистика</string>
+    <string name="shop">Магазин</string>
+    <string name="question">\?</string>
     <string name="percent_top">%d%%</string>
     <string name="percent_bot">%d%%</string>
     <string name="stat_per_aver">Вы отвечали так же, как %s%% игроков</string>
@@ -31,8 +33,16 @@
     <string name="answered_true">Игроков ответили также</string>
 
     <string name="themes">Темы</string>
+    <string name="theme_std">Standart</string>
     <string name="theme_cost_std">100</string>
+    <string name="theme_black">Black</string>
     <string name="theme_cost_black">100</string>
+    <string name="theme_white">White</string>
     <string name="theme_cost_white">100</string>
+    <string name="theme_fresh">Fresh</string>
     <string name="theme_cost_fresh">100</string>
+
+    <string name="skip_lvl_coins">Пропустить уровень за 100 монет</string>
+    <string name="skip_lvl_ads">Пропустить уровень за рекламу</string>
+    <string name="remove_ads">Отключить рекламу и получить 1000 монет</string>
 </resources>
