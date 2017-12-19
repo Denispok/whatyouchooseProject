@@ -2,20 +2,31 @@ package com.gamesbars.whatyouchoose;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.Constants;
+import com.anjlab.android.iab.v3.TransactionDetails;
+
+import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_ADS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_BLACK;
@@ -23,12 +34,13 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_FRE
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_STD;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_WHITE;
 
-public class ShopActivity extends AppCompatActivity {
+public class ShopActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
     private static final Integer THEME_COST_STD = 100;
     private static final Integer THEME_COST_BLACK = 100;
     private static final Integer THEME_COST_WHITE = 100;
     private static final Integer THEME_COST_FRESH = 100;
+    private static final String REMOVE_ADS_ID = "remove_ads";
 
     Integer theme;
     Integer coins;
@@ -43,6 +55,8 @@ public class ShopActivity extends AppCompatActivity {
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
+
+    BillingProcessor mBillingProcessor;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -77,6 +91,16 @@ public class ShopActivity extends AppCompatActivity {
         back_button = (ImageButton) findViewById(R.id.back_button);
         shop_coins = (TextView) findViewById(R.id.shop_coins);
 
+        //  Устанавливаем button_selector темы на Buttons backgrounds
+        Drawable button_drawable = null;
+        switch (theme) {
+            case R.style.AppTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_standart); break;
+            case R.style.BlackTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_black); break;
+            case R.style.WhiteTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_white); break;
+            case R.style.FreshTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_fresh); break;
+        }
+        findViewById(R.id.remove_ad_button).setBackground(button_drawable);
+
         //  Обновляем количество монет
         refreshCoins();
 
@@ -88,6 +112,13 @@ public class ShopActivity extends AppCompatActivity {
 
         //  Загружаем диалоговое окно с подтверждением покупки темы
         loadAlertDialogs();
+
+        //  Подключаемся к Google Play и инициализируем IAP
+        if (mSettings.getBoolean(APP_PREFERENCES_ADS, true)) loadIAB();
+        else {
+            findViewById(R.id.remove_ad_button).setClickable(false);
+            findViewById(R.id.remove_ad_button).setBackground(getResources().getDrawable(R.drawable.button_selector_gray));
+        }
     }
 
     private void refreshCoins() {
@@ -196,6 +227,18 @@ public class ShopActivity extends AppCompatActivity {
         dontEnoughCoinsDialog = coinsBuilder.create();
     }
 
+    private void loadIAB() {
+        boolean isAvailable = BillingProcessor.isIabServiceAvailable(this);
+        if(!isAvailable) {
+            findViewById(R.id.remove_ad_button).setClickable(false);
+            findViewById(R.id.remove_ad_button).setBackground(getResources().getDrawable(R.drawable.button_selector_gray));
+            Toast.makeText(this, "Внутриигровые покупки недоступны на вашем устройстве.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mBillingProcessor = new BillingProcessor(this, "INSERT IDENTIFIER HERE", this);
+    }
+
     public void clickBuyTheme(View view) {
         clicked_buy_button_id = view.getId();
 
@@ -274,9 +317,83 @@ public class ShopActivity extends AppCompatActivity {
         this.recreate();
     }
 
+    public void clickBuyAds(View view) {
+        mBillingProcessor.purchase(this, REMOVE_ADS_ID);
+    }
+
     public void clickBack(View view) {
         this.onBackPressed();
     }
 
+    @Override
+    public void onBillingInitialized() {
+    /*
+    * Called when BillingProcessor was initialized and it's ready to purchase
+    */
+        Log.d("IAP", "Billing initialized successful");
+    }
+
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+    /*
+    * Called when requested PRODUCT ID was successfully purchased
+    */
+        if (productId.equals(REMOVE_ADS_ID)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_ADS, false);
+            editor.putInt(APP_PREFERENCES_COINS, mSettings.getInt(APP_PREFERENCES_COINS, 0) + 1000);
+            editor.apply();
+            refreshCoins();
+            findViewById(R.id.remove_ad_button).setClickable(false);
+            findViewById(R.id.remove_ad_button).setBackground(getResources().getDrawable(R.drawable.button_selector_gray));
+        }
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+    /*
+    * Called when some error occurred. See Constants class for more details
+    *
+    * Note - this includes handling the case where the user canceled the buy dialog:
+    * errorCode = Constants.BILLING_RESPONSE_RESULT_USER_CANCELED
+    */
+        if (errorCode == Constants.BILLING_RESPONSE_RESULT_USER_CANCELED) Log.d("IAP", "User canceled the buy dialog");
+        else Log.d("IAP", "Billing error");
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+    /*
+    * Called when purchase history was restored and the list of all owned PRODUCT ID's
+    * was loaded from Google Play
+    */
+        List<String> ownedProducts =  mBillingProcessor.listOwnedProducts();
+
+        if (ownedProducts.contains(REMOVE_ADS_ID)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_ADS, false);
+            editor.putInt(APP_PREFERENCES_COINS, mSettings.getInt(APP_PREFERENCES_COINS, 0) + 1000);
+            editor.apply();
+            refreshCoins();
+            findViewById(R.id.remove_ad_button).setClickable(false);
+            findViewById(R.id.remove_ad_button).setBackground(getResources().getDrawable(R.drawable.button_selector_gray));
+            Toast.makeText(this, "Ваша покупка была восстановлена!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!mBillingProcessor.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mBillingProcessor != null) {
+            mBillingProcessor.release();
+        }
+        super.onDestroy();
+    }
 }
 

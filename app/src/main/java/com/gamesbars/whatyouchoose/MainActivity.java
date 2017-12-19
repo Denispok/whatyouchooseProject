@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import java.io.IOException;
 
@@ -19,7 +18,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     //  Для работы с SQLite
-    public static final String TABLE_QUESTIONS_NAME = "QUESTIONS";
     public static final String KEY_QUESTION_ONE = "QUEST1";
     public static final String KEY_QUESTION_TWO = "QUEST2";
     public static final String KEY_QUESTION_ONE_PERCENTAGE = "QUEST1PER";
@@ -29,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
     //  Для работы с Shared Preferences
     public static final String APP_PREFERENCES = "settings";
     public static final String APP_PREFERENCES_THEME = "theme";
-    public static final String APP_PREFERENCES_LVL = "level";   //  Текущий уровень
-    public static final String APP_PREFERENCES_LVL_SKIPPED = "level_skipped";   //  Текущий уровень
+    public static final String APP_PREFERENCES_LVL_PACK_1 = "level_pack_1";   //  Текущий уровень пак 1
+    public static final String APP_PREFERENCES_LVL_PACK_2 = "level_pack_2";   //  Текущий уровень пак 2
+    public static final String APP_PREFERENCES_LVL_PACK_HARD = "level_pack_hard";   //  Текущий уровень пак хард
+    public static final String APP_PREFERENCES_LVL_SKIPPED = "level_skipped";   //  Пропущенные
     public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
                                                         (т.е. выбирал как такой-то процент людей */
     public static final String APP_PREFERENCES_PER_MOST = "percent_most"; // самый неуникальный выбор
@@ -46,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_THEME_BLACK = "theme_black"; // куплена ли черная тема
     public static final String APP_PREFERENCES_THEME_WHITE = "theme_white"; // куплена ли белая тема
     public static final String APP_PREFERENCES_THEME_FRESH = "theme_fresh"; // куплена ли тема свежесть
+
+    public static final String APP_PREFERENCES_PACK_1 = "pack_1"; // куплен ли пак 1
+    public static final String APP_PREFERENCES_PACK_2 = "pack_2"; // куплен ли пак 2
+    public static final String APP_PREFERENCES_PACK_HARD = "pack_hard"; // куплен ли пак хард
+    public static final String APP_PREFERENCES_ADS = "ads"; // показывать ли рекламу
     public SharedPreferences mSettings;
     public SharedPreferences.Editor editor;
 
@@ -78,9 +83,21 @@ public class MainActivity extends AppCompatActivity {
 
         //  Загружаем настройки или создаем новые при первом запуске
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (!mSettings.contains(APP_PREFERENCES_LVL)) {
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_1)) {
             editor = mSettings.edit();
-            editor.putInt(APP_PREFERENCES_LVL, 1);
+            editor.putInt(APP_PREFERENCES_LVL_PACK_1, 1);
+            editor.commit();
+        }
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_2)) {
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_LVL_PACK_2, 1);
+            editor.commit();
+        }
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_HARD)) {
+            editor = mSettings.edit();
+            editor.putInt(APP_PREFERENCES_LVL_PACK_HARD, 1);
             editor.commit();
         }
 
@@ -98,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!mSettings.contains(APP_PREFERENCES_FIRST_COINS_TOUCH)) {
             editor = mSettings.edit();
-            editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, false); // TEST MONEY 1K
+            editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, false);
             editor.commit();
         }
 
@@ -129,23 +146,26 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        /*if (!mSettings.contains(APP_PREFERENCES_TIME_MAX)){
+        if (!mSettings.contains(APP_PREFERENCES_PACK_1)) {
             editor = mSettings.edit();
-            editor.putFloat(APP_PREFERENCES_TIME_MAX, 0);
+            editor.putBoolean(APP_PREFERENCES_PACK_1, false); //!!!!!!True!!!!!!!!!!!!
             editor.commit();
         }
-
-        if (!mSettings.contains(APP_PREFERENCES_TIME_AVER)){
+        if (!mSettings.contains(APP_PREFERENCES_PACK_2)) {
             editor = mSettings.edit();
-            editor.putFloat(APP_PREFERENCES_TIME_AVER, 0);
+            editor.putBoolean(APP_PREFERENCES_PACK_2, false);
             editor.commit();
         }
-
-        if (!mSettings.contains(APP_PREFERENCES_TIME_MIN)){
+        if (!mSettings.contains(APP_PREFERENCES_PACK_HARD)) {
             editor = mSettings.edit();
-            editor.putFloat(APP_PREFERENCES_TIME_MIN, 0);
+            editor.putBoolean(APP_PREFERENCES_PACK_HARD, false);
             editor.commit();
-        }*/
+        }
+        if (!mSettings.contains(APP_PREFERENCES_ADS)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_ADS, true);
+            editor.commit();
+        }
 
         //  Устанавливаем тему, отображаем Activity
         theme = mSettings.getInt(APP_PREFERENCES_THEME, R.style.AppTheme);
@@ -181,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void play(View view) {
-        playIntent = new Intent(this, LevelActivity.class);
+        playIntent = new Intent(this, PacksActivity.class);
         startActivity(playIntent);
     }
 
@@ -195,3 +215,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(shopIntent);
     }
 }
+

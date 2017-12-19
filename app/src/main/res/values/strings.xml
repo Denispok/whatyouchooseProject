@@ -20,6 +20,7 @@
     <string name="help_dialog_negative">Так точно!</string>
 
     <string name="confirm_dialog_title">Купить тему %1$s за %2$d?</string>
+    <string name="confirm_dialog_title_pack">Купить %1$s за %2$d?</string>
     <string name="dont_enough_coins_dialog_title">Недостаточно средств.</string>
     <string name="ok">ОК</string>
     <string name="cancel">Отмена</string>

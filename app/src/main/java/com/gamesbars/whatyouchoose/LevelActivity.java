@@ -2,6 +2,7 @@ package com.gamesbars.whatyouchoose;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -12,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -21,6 +23,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,9 +39,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_ADS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_FIRST_COINS_TOUCH;
-import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_2;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_HARD;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_SKIPPED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
@@ -43,10 +57,12 @@ import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_ONE;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_ONE_PERCENTAGE;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO;
 import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO_PERCENTAGE;
-import static com.gamesbars.whatyouchoose.MainActivity.TABLE_QUESTIONS_NAME;
 
 public class LevelActivity extends AppCompatActivity {
 
+    private static final Long AD_FREQUENCY = 15000L; // !!! ЧАСТОТА ПОКАЗА
+    String TABLE_QUESTIONS_NAME;
+    String APP_PREFERENCES_LVL;
     Boolean state; /*   Состояние layout: 0 - ожидает выбора (невозбужденное);
                                           1 - ожидает нажатия для перехода на следующий уровень
                                               (возбужденное) */
@@ -89,7 +105,6 @@ public class LevelActivity extends AppCompatActivity {
     Animation disappear_anim_with_listener;
     Animation appear_anim;
     Animation.AnimationListener percents_anim_listener;
-    Animation.AnimationListener question_anim_listener;
     Animation.AnimationListener disappear_anim_listener;
     Animation.AnimationListener appear_anim_listener;
 
@@ -103,6 +118,10 @@ public class LevelActivity extends AppCompatActivity {
     SQLiteDatabase myDb;
     Cursor cursor;
 
+    private InterstitialAd mInterstitialAd;
+    private Long adsTimer;
+    private RewardedVideoAd mRewardedVideoAd;
+
     @Override   //  Подруб шрифтов
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -111,6 +130,15 @@ public class LevelActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //  Получаем название таблицы из экстра инфы
+        Intent intent = getIntent();
+        TABLE_QUESTIONS_NAME = intent.getStringExtra(Intent.EXTRA_TEXT);
+        switch (TABLE_QUESTIONS_NAME) {
+            case "PACK_1": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_1; break;
+            case "PACK_2": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_2; break;
+            case "PACK_HARD": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_HARD; break;
+        }
 
         //  Подруб шрифтов
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
@@ -163,12 +191,16 @@ public class LevelActivity extends AppCompatActivity {
         //  Начинаем отсчет времени уровня
         level_time = System.currentTimeMillis();
 
+        //  Загружаем рекламу
+        loadAds();
+
         //  Загружаем уровень
         loadLevel();
 
         //  Если не было первого нажатия на level_coins, то запускает его подсветку
-        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true))
+        if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true)) {
             coinsAlertStarter();
+        }
     }
 
     private void loadThemeImages() {
@@ -247,23 +279,6 @@ public class LevelActivity extends AppCompatActivity {
         percents_anim_bot.setFillAfter(true);
 
         //  Анимация вопросов
-        question_anim_listener = new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        };
-
         question_anim_top = AnimationUtils.loadAnimation(this, R.anim.question_anim_top);
         question_anim_top.setFillAfter(true);
 
@@ -358,6 +373,74 @@ public class LevelActivity extends AppCompatActivity {
         coinsDialog = builder.create();
     }
 
+    private void loadAds() {
+        MobileAds.initialize(this, "INSERT IDENTIFIER HERE");
+
+        //  Межстраничная реклама
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712"); //   !!! ТЕСТОВЫЙ АЙДИ РЕКЛАМЫ
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                // Load the next interstitial.
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+
+        adsTimer = System.currentTimeMillis();
+
+        //  Реклама за пропуск уровня
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+                adsTimer = System.currentTimeMillis();
+                loadRewardedVideoAd();
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                adsTimer = System.currentTimeMillis();
+                skipLevel();
+                coinsDialog.cancel();
+                loadRewardedVideoAd();
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+                loadRewardedVideoAd();
+            }
+        });
+        loadRewardedVideoAd();
+    }
+
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917", // !!! ТЕСТОВОЕ
+                new AdRequest.Builder().build());
+    }
+
     private void loadLevel() {
         //  Изначальное состояние = 0 (не возбужденное)
         state = false;
@@ -383,6 +466,17 @@ public class LevelActivity extends AppCompatActivity {
 
         //  Закрываем DataBase
         myDb.close();
+
+        //  Показ рекламы
+        if (mSettings.getBoolean(APP_PREFERENCES_ADS, true) && System.currentTimeMillis() - adsTimer >= AD_FREQUENCY) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+                adsTimer = System.currentTimeMillis();
+            } else {
+                Log.d("ADS", "The interstitial wasn't loaded yet.");
+            }
+
+        }
     }
 
     private void coinsAlertStarter() {
@@ -409,8 +503,8 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     private class CoinsAlertTask extends AsyncTask<Void, Void, Void> {
+
         TransitionDrawable transition = (TransitionDrawable) level_coins.getBackground();
-        ;
 
         @Override
         protected void onPreExecute() {
@@ -434,6 +528,7 @@ public class LevelActivity extends AppCompatActivity {
             transition.reverseTransition(750);
             coinsAlertStarter();
         }
+
     }
 
     private void openDB() {
@@ -533,7 +628,7 @@ public class LevelActivity extends AppCompatActivity {
         editor = mSettings.edit();
 
         // Инициализация статистики в Preferences на 1 уровне
-        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 1 || mSettings.getInt(APP_PREFERENCES_PER_LESS, 0) == 0) {
+        if (mSettings.getInt(APP_PREFERENCES_PER_LESS, 0) == 0) {
             editor.putFloat(APP_PREFERENCES_TIME_MAX, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(level_time / 10f) / 100f);
@@ -550,8 +645,10 @@ public class LevelActivity extends AppCompatActivity {
                 editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             }
 
-            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
-                    + Math.round(level_time / 10f) / 100f) / (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
+            Integer all_levels = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0) - 2;
+
+            editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
+                    + Math.round(level_time / 10f) / 100f) / (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
 
             if (choice_per > mSettings.getInt(APP_PREFERENCES_PER_MOST, 0)) {
                 editor.putInt(APP_PREFERENCES_PER_MOST, choice_per);
@@ -561,8 +658,8 @@ public class LevelActivity extends AppCompatActivity {
                 editor.putInt(APP_PREFERENCES_PER_LESS, choice_per);
             }
 
-            editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
-                    + choice_per) / (mSettings.getInt(APP_PREFERENCES_LVL, 0) - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
+            editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
+                    + choice_per) / (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
         }
 
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
@@ -613,6 +710,7 @@ public class LevelActivity extends AppCompatActivity {
             editor.putInt(APP_PREFERENCES_COINS, coins - 100);
             editor.apply();
 
+            adsTimer = System.currentTimeMillis() + 5000L;
             skipLevel();
             coinsDialog.cancel();
         }
@@ -620,9 +718,13 @@ public class LevelActivity extends AppCompatActivity {
 
     public void skipForAds(View view) {
         if (!state) {
-            skipLevel();
-            coinsDialog.cancel();
+            if (mRewardedVideoAd.isLoaded()) mRewardedVideoAd.show();
+            else Toast.makeText(this ,"Ошибка загрузки рекламы", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void removeAds(View view) {
+        startActivity(new Intent(this, ShopActivity.class));
     }
 
     private void skipLevel() {
@@ -649,3 +751,4 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 }
+

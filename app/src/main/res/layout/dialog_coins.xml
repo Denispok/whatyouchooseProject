@@ -20,6 +20,7 @@
         style="@style/ButtonStyle"
         android:layout_width="264dp"
         android:layout_height="wrap_content"
+        android:onClick="skipForAds"
         android:padding="8dp"
         android:text="@string/skip_lvl_ads" />
 
@@ -29,6 +30,7 @@
         android:layout_width="264dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:onClick="removeAds"
         android:padding="8dp"
         android:text="@string/remove_ads" />
 
