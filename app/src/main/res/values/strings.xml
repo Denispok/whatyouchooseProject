@@ -15,9 +15,11 @@
     <string name="stat_time_min">Самый лёгкий выбор</string>
 
     <!-- Для диалоговых окон -->
-    <string name="help_dialog_message">Комиссия Поклонской ни разу не собиралась для обсуждения деклараций депутатов, чем недовольны даже сами её участники.\n\nСама Поклонская никак это не комментирует. Видимо, у неё есть дела поважнее.</string>
+    <string name="help_dialog_message">place help here</string>
     <string name="help_dialog_title">Важная информация</string>
-    <string name="help_dialog_negative">Так точно!</string>
+    <string name="pack_end_dialog_message">Вы дошли до конца пака, можете запустить его ещё раз (статистика больше не будет засчитываться) или перейти к следующему, но предупреждаю, там будет жестче.</string>
+    <string name="pack_end_dialog_title">Ну что ж</string>
+    <string name="dialog_negative">Ок</string>
 
     <string name="confirm_dialog_title">Купить тему %1$s за %2$d?</string>
     <string name="confirm_dialog_title_pack">Купить %1$s за %2$d?</string>
@@ -34,16 +36,17 @@
     <string name="answered_true">Игроков ответили также</string>
 
     <string name="themes">Темы</string>
+    <string name="theme_cost">200</string>
     <string name="theme_std">Standart</string>
-    <string name="theme_cost_std">100</string>
     <string name="theme_black">Black</string>
-    <string name="theme_cost_black">100</string>
     <string name="theme_white">White</string>
-    <string name="theme_cost_white">100</string>
     <string name="theme_fresh">Fresh</string>
-    <string name="theme_cost_fresh">100</string>
 
     <string name="skip_lvl_coins">Пропустить уровень за 100 монет</string>
     <string name="skip_lvl_ads">Пропустить уровень за рекламу</string>
     <string name="remove_ads">Отключить рекламу и получить 1000 монет</string>
+    <string name="pack_1_title">Сложно</string>
+    <string name="pack_2_title">Сложнее</string>
+    <string name="pack_hard_title">Невозможно</string>
+    <string name="current_lvl">#%1$02d</string>
 </resources>

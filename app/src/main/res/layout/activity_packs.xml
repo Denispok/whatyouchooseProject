@@ -48,7 +48,7 @@
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="1"
-                android:text="pack 1"
+                android:text="@string/pack_1_title"
                 android:textAllCaps="false"
                 android:textColor="?colorTextButton"
                 android:textSize="24sp" />
@@ -90,7 +90,7 @@
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="1"
-                android:text="pack 2"
+                android:text="@string/pack_2_title"
                 android:textAllCaps="false"
                 android:textColor="?colorTextButton"
                 android:textSize="24sp" />
@@ -103,7 +103,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="1500"
+                android:text="250"
                 android:textColor="?colorTextButton"
                 android:textSize="24sp" />
 
@@ -132,7 +132,7 @@
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="1"
-                android:text="pack hard"
+                android:text="@string/pack_hard_title"
                 android:textAllCaps="false"
                 android:textColor="?colorTextButton"
                 android:textSize="24sp" />
@@ -145,7 +145,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="1500"
+                android:text="500"
                 android:textColor="?colorTextButton"
                 android:textSize="24sp" />
 

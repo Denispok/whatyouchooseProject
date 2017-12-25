@@ -59,7 +59,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="@string/theme_cost_std"
+                android:text="@string/theme_cost"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
@@ -100,7 +100,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_black_24dp"
-                android:text="@string/theme_cost_black"
+                android:text="@string/theme_cost"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
@@ -141,7 +141,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="@string/theme_cost_white"
+                android:text="@string/theme_cost"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
@@ -182,7 +182,7 @@
                 android:layout_margin="8dp"
                 android:clickable="false"
                 android:drawableRight="@drawable/ic_stars_white_24dp"
-                android:text="@string/theme_cost_fresh"
+                android:text="@string/theme_cost"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 

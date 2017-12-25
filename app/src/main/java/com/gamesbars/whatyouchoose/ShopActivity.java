@@ -36,10 +36,10 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_WHI
 
 public class ShopActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
 
-    private static final Integer THEME_COST_STD = 100;
-    private static final Integer THEME_COST_BLACK = 100;
-    private static final Integer THEME_COST_WHITE = 100;
-    private static final Integer THEME_COST_FRESH = 100;
+    private static final Integer THEME_COST_STD = 200;
+    private static final Integer THEME_COST_BLACK = 200;
+    private static final Integer THEME_COST_WHITE = 200;
+    private static final Integer THEME_COST_FRESH = 200;
     private static final String REMOVE_ADS_ID = "remove_ads";
 
     Integer theme;

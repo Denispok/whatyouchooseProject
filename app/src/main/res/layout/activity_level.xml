@@ -123,31 +123,6 @@
         android:paddingTop="10dp"
         android:src="@drawable/ic_arrow_back_black_36dp" />
 
-    <!---
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="4dp"
-    android:layout_marginTop="8dp"
-    android:layout_centerHorizontal="true">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginRight="2dp"
-        android:src="@drawable/ic_stars_black_24dp" />
-
-    <TextView
-        android:id="@+id/level_coins"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:text="1900"/>
-
-</LinearLayout>
--->
-
     <TextView
         android:id="@+id/level_coins"
         android:layout_width="wrap_content"
@@ -183,11 +158,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:background="#0000"
-        android:onClick="clickHelp"
         android:paddingBottom="6dp"
         android:paddingEnd="10dp"
         android:paddingStart="6dp"
         android:paddingTop="9dp"
         android:src="@drawable/ic_help_outline_black_36dp" />
+
+    <TextView
+        android:id="@+id/current_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.55"
+        android:text="@string/current_lvl"
+        android:textColor="?colorTextPlayBot"
+        android:textSize="16sp" />
 
 </RelativeLayout>

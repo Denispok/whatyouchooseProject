@@ -18,8 +18,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_2;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_2_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_HARD;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_HARD_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_SKIPPED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
@@ -126,7 +129,14 @@ public class StatActivity extends AppCompatActivity {
     }
 
     void loadStat() {
-        Integer all_levels = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0) - 3;
+        Integer levels_pack_1;
+        Integer levels_pack_2;
+        Integer levels_pack_hard;
+        if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_1_COMPLETED , false)) levels_pack_1 = 40; else levels_pack_1 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0);
+        if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_2_COMPLETED , false)) levels_pack_2 = 40; else levels_pack_2 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0);
+        if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED , false)) levels_pack_hard = 40; else levels_pack_hard = mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0);
+        Integer all_levels = levels_pack_1 + levels_pack_2 + levels_pack_hard - 3;
+
         stat_count.setText(String.valueOf(all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0)));
         stat_per_aver.setText(String.format(getString(R.string.stat_per_aver), String.valueOf(mSettings.getFloat(APP_PREFERENCES_PER, 0))));
         stat_per_min.setText(String.format(getString(R.string.stat_per_value), mSettings.getInt(APP_PREFERENCES_PER_LESS, 0)));

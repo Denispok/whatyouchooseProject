@@ -26,8 +26,8 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME;
 public class PacksActivity extends AppCompatActivity {
 
     private static final Integer COST_PACK_1 = 100;
-    private static final Integer COST_PACK_2 = 100;
-    private static final Integer COST_PACK_HARD = 100;
+    private static final Integer COST_PACK_2 = 250;
+    private static final Integer COST_PACK_HARD = 500;
 
     Integer theme;
     Integer coins;
@@ -270,5 +270,10 @@ public class PacksActivity extends AppCompatActivity {
         this.onBackPressed();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshCoins();
+    }
 }
 

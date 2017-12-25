@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_LVL_PACK_1 = "level_pack_1";   //  Текущий уровень пак 1
     public static final String APP_PREFERENCES_LVL_PACK_2 = "level_pack_2";   //  Текущий уровень пак 2
     public static final String APP_PREFERENCES_LVL_PACK_HARD = "level_pack_hard";   //  Текущий уровень пак хард
+    public static final String APP_PREFERENCES_LVL_PACK_1_COMPLETED = "level_pack_1_completed";   //  завершен ли пак 1
+    public static final String APP_PREFERENCES_LVL_PACK_2_COMPLETED = "level_pack_2_completed";   //  завершен ли пак 1
+    public static final String APP_PREFERENCES_LVL_PACK_HARD_COMPLETED = "level_pack_hard_completed";   //  завершен ли пак хард
     public static final String APP_PREFERENCES_LVL_SKIPPED = "level_skipped";   //  Пропущенные
     public static final String APP_PREFERENCES_PER = "percent"; /*  Средний процент уникальности
                                                         (т.е. выбирал как такой-то процент людей */
@@ -101,6 +104,22 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_1_COMPLETED)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_LVL_PACK_1_COMPLETED, false);
+            editor.commit();
+        }
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_2_COMPLETED)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_LVL_PACK_2_COMPLETED, false);
+            editor.commit();
+        }
+        if (!mSettings.contains(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED, false);
+            editor.commit();
+        }
+
         if (!mSettings.contains(APP_PREFERENCES_LVL_SKIPPED)) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL_SKIPPED, 0);
@@ -109,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!mSettings.contains(APP_PREFERENCES_COINS)) {
             editor = mSettings.edit();
-            editor.putInt(APP_PREFERENCES_COINS, 1000); // TEST MONEY 1K
+            editor.putInt(APP_PREFERENCES_COINS, 100);
             editor.commit();
         }
 
@@ -148,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!mSettings.contains(APP_PREFERENCES_PACK_1)) {
             editor = mSettings.edit();
-            editor.putBoolean(APP_PREFERENCES_PACK_1, false); //!!!!!!True!!!!!!!!!!!!
+            editor.putBoolean(APP_PREFERENCES_PACK_1, true);
             editor.commit();
         }
         if (!mSettings.contains(APP_PREFERENCES_PACK_2)) {

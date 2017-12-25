@@ -43,8 +43,11 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_ADS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_FIRST_COINS_TOUCH;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_2;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_2_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_HARD;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_HARD_COMPLETED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_SKIPPED;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_PER_LESS;
@@ -60,7 +63,7 @@ import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO_PERCENTA
 
 public class LevelActivity extends AppCompatActivity {
 
-    private static final Long AD_FREQUENCY = 15000L; // !!! ЧАСТОТА ПОКАЗА
+    private static final Long AD_FREQUENCY = 50000L; // ЧАСТОТА ПОКАЗА РЕКЛАМЫ
     String TABLE_QUESTIONS_NAME;
     String APP_PREFERENCES_LVL;
     Boolean state; /*   Состояние layout: 0 - ожидает выбора (невозбужденное);
@@ -110,6 +113,7 @@ public class LevelActivity extends AppCompatActivity {
 
     AlertDialog helpDialog;
     AlertDialog coinsDialog;
+    AlertDialog packEndDialog;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -187,6 +191,9 @@ public class LevelActivity extends AppCompatActivity {
 
         //  Загружаем диалоговое окно с покупками
         loadCoinsDialog();
+
+        //  Загружаем диалоговое окно окончания пака с вопросами
+        loadPackEndDialog();
 
         //  Начинаем отсчет времени уровня
         level_time = System.currentTimeMillis();
@@ -348,7 +355,7 @@ public class LevelActivity extends AppCompatActivity {
         builder.setMessage(R.string.help_dialog_message)
                 .setTitle(R.string.help_dialog_title);
 
-        builder.setNegativeButton(R.string.help_dialog_negative, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_negative, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
             }
@@ -371,6 +378,24 @@ public class LevelActivity extends AppCompatActivity {
 
         // 3. Get the AlertDialog from create()
         coinsDialog = builder.create();
+    }
+
+    private void loadPackEndDialog() {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage(R.string.pack_end_dialog_message)
+                .setTitle(R.string.pack_end_dialog_title);
+
+        builder.setNegativeButton(R.string.dialog_negative, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        packEndDialog = builder.create();
     }
 
     private void loadAds() {
@@ -448,6 +473,10 @@ public class LevelActivity extends AppCompatActivity {
         //  Загружаем коины
         coins = mSettings.getInt(APP_PREFERENCES_COINS, 0);
         level_coins.setText(Integer.toString(coins));
+
+        //  Отображаем текущий уровень
+        TextView current_level = (TextView) findViewById(R.id.current_level);
+        current_level.setText(String.format(getString(R.string.current_lvl), mSettings.getInt(APP_PREFERENCES_LVL, 1)));
 
         // Открываем DataBase и ситываем информацию для текущего уровня
         openDB();
@@ -605,21 +634,22 @@ public class LevelActivity extends AppCompatActivity {
         answered_bot.startAnimation(percents_anim_bot);
 
         //  Прибавляем коины
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_COINS, mSettings.getInt(APP_PREFERENCES_COINS, 0) + 10);
+        editor.apply();
         coins += 10;
 
         //  Записываем время уровня
         level_time = System.currentTimeMillis() - level_time;
 
-        //  DEBUG TOAST
-        //Toast.makeText(this, Float.toString(Math.round(level_time / 10f) / 100f), Toast.LENGTH_LONG).show();
+        //  Сохраняем значение нового уровня и статистику в настройки
+        if (!mSettings.getBoolean(APP_PREFERENCES_LVL + "_completed", true)) saveStatistic();
+        editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
+        editor.apply();
 
-        //  Сохраняем значение нового уровня, монеты и статистику в настройки
-        saveStatistic();
-
-        //  DEBUG TOAST
-        // Toast.makeText(this, Float.toString(mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0)), Toast.LENGTH_LONG).show();
-
-        debugEndLevel();
+        //  Проверка закончился ли пак
+        checkPackEnd();
 
         state = true;
     }
@@ -645,7 +675,13 @@ public class LevelActivity extends AppCompatActivity {
                 editor.putFloat(APP_PREFERENCES_TIME_MIN, Math.round(level_time / 10f) / 100f);
             }
 
-            Integer all_levels = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0) + mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0) - 2;
+            Integer levels_pack_1;
+            Integer levels_pack_2;
+            Integer levels_pack_hard;
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_1_COMPLETED , false)) levels_pack_1 = 40; else levels_pack_1 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0);
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_2_COMPLETED , false)) levels_pack_2 = 40; else levels_pack_2 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0);
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED , false)) levels_pack_hard = 40; else levels_pack_hard = mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0);
+            Integer all_levels = levels_pack_1 + levels_pack_2 + levels_pack_hard - 2;
 
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
                     + Math.round(level_time / 10f) / 100f) / (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
@@ -661,9 +697,6 @@ public class LevelActivity extends AppCompatActivity {
             editor.putFloat(APP_PREFERENCES_PER, Math.round(((mSettings.getFloat(APP_PREFERENCES_PER, 0) * (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)
                     + choice_per) / (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0))) * 100f) / 100f);
         }
-
-        editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
-        editor.putInt(APP_PREFERENCES_COINS, coins);
 
         editor.apply();
     }
@@ -730,10 +763,11 @@ public class LevelActivity extends AppCompatActivity {
     private void skipLevel() {
         editor = mSettings.edit();
         editor.putInt(APP_PREFERENCES_LVL, mSettings.getInt(APP_PREFERENCES_LVL, 0) + 1);
-        editor.putInt(APP_PREFERENCES_LVL_SKIPPED, mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) + 1);
+        if (!mSettings.getBoolean(APP_PREFERENCES_LVL + "_completed", true))
+            editor.putInt(APP_PREFERENCES_LVL_SKIPPED, mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) + 1);
         editor.apply();
 
-        debugEndLevel();
+        checkPackEnd();
 
         loadLevel();
 
@@ -741,13 +775,13 @@ public class LevelActivity extends AppCompatActivity {
         level_time = System.currentTimeMillis();
     }
 
-    // DEBUG FUNCTION WHICH STARTS LEVELS AGAIN WHEN LEVELS ENDS
-    private void debugEndLevel() {
-        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 11) {
+    private void checkPackEnd() {
+        if (mSettings.getInt(APP_PREFERENCES_LVL, 0) == 41) {
             editor = mSettings.edit();
             editor.putInt(APP_PREFERENCES_LVL, 1);
-            editor.putInt(APP_PREFERENCES_LVL_SKIPPED, 0);
+            editor.putBoolean(APP_PREFERENCES_LVL + "_completed", true);
             editor.commit();
+            packEndDialog.show();
         }
     }
 }
