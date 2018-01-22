@@ -49,4 +49,5 @@
     <string name="pack_2_title">Сложнее</string>
     <string name="pack_hard_title">Невозможно</string>
     <string name="current_lvl">#%1$02d</string>
+    <string name="get_coins">Получить 200 монет</string>
 </resources>

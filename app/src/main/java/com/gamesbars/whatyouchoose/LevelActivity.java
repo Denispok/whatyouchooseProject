@@ -63,7 +63,7 @@ import static com.gamesbars.whatyouchoose.MainActivity.KEY_QUESTION_TWO_PERCENTA
 
 public class LevelActivity extends AppCompatActivity {
 
-    private static final Long AD_FREQUENCY = 50000L; // ЧАСТОТА ПОКАЗА РЕКЛАМЫ
+    private static final Long AD_FREQUENCY = 40000L; // ЧАСТОТА ПОКАЗА РЕКЛАМЫ
     String TABLE_QUESTIONS_NAME;
     String APP_PREFERENCES_LVL;
     Boolean state; /*   Состояние layout: 0 - ожидает выбора (невозбужденное);
@@ -124,7 +124,6 @@ public class LevelActivity extends AppCompatActivity {
 
     private InterstitialAd mInterstitialAd;
     private Long adsTimer;
-    private RewardedVideoAd mRewardedVideoAd;
 
     @Override   //  Подруб шрифтов
     protected void attachBaseContext(Context newBase) {
@@ -399,11 +398,11 @@ public class LevelActivity extends AppCompatActivity {
     }
 
     private void loadAds() {
-        MobileAds.initialize(this, "INSERT IDENTIFIER HERE");
+        MobileAds.initialize(this, "INSERT ID HERE");
 
         //  Межстраничная реклама
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712"); //   !!! ТЕСТОВЫЙ АЙДИ РЕКЛАМЫ
+        mInterstitialAd.setAdUnitId("INSERT ID HERE");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -415,55 +414,6 @@ public class LevelActivity extends AppCompatActivity {
         });
 
         adsTimer = System.currentTimeMillis();
-
-        //  Реклама за пропуск уровня
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
-            @Override
-            public void onRewardedVideoAdLoaded() {
-
-            }
-
-            @Override
-            public void onRewardedVideoAdOpened() {
-
-            }
-
-            @Override
-            public void onRewardedVideoStarted() {
-
-            }
-
-            @Override
-            public void onRewardedVideoAdClosed() {
-                adsTimer = System.currentTimeMillis();
-                loadRewardedVideoAd();
-            }
-
-            @Override
-            public void onRewarded(RewardItem rewardItem) {
-                adsTimer = System.currentTimeMillis();
-                skipLevel();
-                coinsDialog.cancel();
-                loadRewardedVideoAd();
-            }
-
-            @Override
-            public void onRewardedVideoAdLeftApplication() {
-
-            }
-
-            @Override
-            public void onRewardedVideoAdFailedToLoad(int i) {
-                loadRewardedVideoAd();
-            }
-        });
-        loadRewardedVideoAd();
-    }
-
-    private void loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917", // !!! ТЕСТОВОЕ
-                new AdRequest.Builder().build());
     }
 
     private void loadLevel() {
@@ -749,11 +699,8 @@ public class LevelActivity extends AppCompatActivity {
         }
     }
 
-    public void skipForAds(View view) {
-        if (!state) {
-            if (mRewardedVideoAd.isLoaded()) mRewardedVideoAd.show();
-            else Toast.makeText(this ,"Ошибка загрузки рекламы", Toast.LENGTH_LONG).show();
-        }
+    public void getCoins(View view) {
+        startActivity(new Intent(this, ShopActivity.class));
     }
 
     public void removeAds(View view) {

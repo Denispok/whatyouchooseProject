@@ -19,6 +19,11 @@ import android.widget.Toast;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.Constants;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 import java.util.List;
 
@@ -34,7 +39,7 @@ import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_FRE
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_STD;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_THEME_WHITE;
 
-public class ShopActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
+public class ShopActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler {
 
     private static final Integer THEME_COST_STD = 200;
     private static final Integer THEME_COST_BLACK = 200;
@@ -57,6 +62,7 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
     SharedPreferences.Editor editor;
 
     BillingProcessor mBillingProcessor;
+    RewardedVideoAd mRewardedVideoAd;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -112,6 +118,9 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
 
         //  Загружаем диалоговое окно с подтверждением покупки темы
         loadAlertDialogs();
+
+        //  Загружаем рекламу за вознаграждение
+        loadAds();
 
         //  Подключаемся к Google Play и инициализируем IAP
         if (mSettings.getBoolean(APP_PREFERENCES_ADS, true)) loadIAB();
@@ -236,7 +245,60 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
             return;
         }
 
-        mBillingProcessor = new BillingProcessor(this, "INSERT IDENTIFIER HERE", this);
+        mBillingProcessor = new BillingProcessor(this, "INSERT ID HERE", this);
+    }
+
+    private void loadAds() {
+        MobileAds.initialize(this, "INSERT ID HERE");
+
+        //  Видеореклама с награждением
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+                mRewardedVideoAd.show();
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                coins = mSettings.getInt(APP_PREFERENCES_COINS, 0);
+                editor = mSettings.edit();
+                editor.putInt(APP_PREFERENCES_COINS, coins + 200);
+                editor.apply();
+                refreshCoins();
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+                Toast.makeText(getApplicationContext(), "Ошибка загрузки рекламы",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd("INSERT ID HERE",
+                new AdRequest.Builder().build());
     }
 
     public void clickBuyTheme(View view) {
@@ -315,6 +377,10 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
         editor.putInt(APP_PREFERENCES_THEME, R.style.FreshTheme);
         editor.commit();
         this.recreate();
+    }
+
+    public void clickGetCoins(View view) {
+        loadRewardedVideoAd();
     }
 
     public void clickBuyAds(View view) {

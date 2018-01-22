@@ -9,7 +9,8 @@
         android:id="@+id/skip_for_coins_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="20dp"
         android:onClick="skipForCoins"
         android:padding="8dp"
@@ -19,16 +20,18 @@
         android:id="@+id/skip_for_ads_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
-        android:layout_height="wrap_content"
-        android:onClick="skipForAds"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:onClick="getCoins"
         android:padding="8dp"
-        android:text="@string/skip_lvl_ads" />
+        android:text="Получить 200 монет" />
 
     <Button
         android:id="@+id/remove_ad_button"
         style="@style/ButtonStyle"
         android:layout_width="264dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginBottom="20dp"
         android:onClick="removeAds"
         android:padding="8dp"
