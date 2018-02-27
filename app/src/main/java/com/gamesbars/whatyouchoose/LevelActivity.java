@@ -23,15 +23,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.reward.RewardItem;
-import com.google.android.gms.ads.reward.RewardedVideoAd;
-import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -66,9 +62,8 @@ public class LevelActivity extends AppCompatActivity {
     private static final Long AD_FREQUENCY = 40000L; // ЧАСТОТА ПОКАЗА РЕКЛАМЫ
     String TABLE_QUESTIONS_NAME;
     String APP_PREFERENCES_LVL;
-    Boolean state; /*   Состояние layout: 0 - ожидает выбора (невозбужденное);
-                                          1 - ожидает нажатия для перехода на следующий уровень
-                                              (возбужденное) */
+    Boolean state; /*   Состояние layout: 0 - ожидает выбора;
+                                          1 - ожидает нажатия для перехода на следующий уровень */
 
     Integer coins;
     Long level_time;
@@ -194,9 +189,6 @@ public class LevelActivity extends AppCompatActivity {
         //  Загружаем диалоговое окно окончания пака с вопросами
         loadPackEndDialog();
 
-        //  Начинаем отсчет времени уровня
-        level_time = System.currentTimeMillis();
-
         //  Загружаем рекламу
         loadAds();
 
@@ -207,6 +199,13 @@ public class LevelActivity extends AppCompatActivity {
         if (!mSettings.getBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, true)) {
             coinsAlertStarter();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //  Начинаем отсчет времени уровня
+        level_time = System.currentTimeMillis();
     }
 
     private void loadThemeImages() {

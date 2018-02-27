@@ -106,6 +106,7 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
             case R.style.FreshTheme: button_drawable = getResources().getDrawable(R.drawable.button_selector_fresh); break;
         }
         findViewById(R.id.remove_ad_button).setBackground(button_drawable);
+        findViewById(R.id.get_coins_button).setBackground(button_drawable);
 
         //  Обновляем количество монет
         refreshCoins();
@@ -297,6 +298,8 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void loadRewardedVideoAd() {
+        Toast.makeText(getApplicationContext(), "Загрузка...",
+                Toast.LENGTH_SHORT).show();
         mRewardedVideoAd.loadAd("INSERT ID HERE",
                 new AdRequest.Builder().build());
     }
