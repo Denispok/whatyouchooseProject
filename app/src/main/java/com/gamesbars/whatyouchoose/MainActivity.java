@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_COINS = "coins";      // монеты
     public static final String APP_PREFERENCES_FIRST_COINS_TOUCH = "first_coins_touch"; /* было ли
                                                                         первое нажатие на coins_level*/
+    public static final String APP_PREFERENCES_FEEDBACK = "feedback";   // оставлен ли фидбек
 
     public static final String APP_PREFERENCES_THEME_STD = "theme_std"; // куплена ли стандартная тема
     public static final String APP_PREFERENCES_THEME_BLACK = "theme_black"; // куплена ли черная тема
@@ -135,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
         if (!mSettings.contains(APP_PREFERENCES_FIRST_COINS_TOUCH)) {
             editor = mSettings.edit();
             editor.putBoolean(APP_PREFERENCES_FIRST_COINS_TOUCH, false);
+            editor.commit();
+        }
+
+        if (!mSettings.contains(APP_PREFERENCES_FEEDBACK)) {
+            editor = mSettings.edit();
+            editor.putBoolean(APP_PREFERENCES_FEEDBACK, false);
             editor.commit();
         }
 

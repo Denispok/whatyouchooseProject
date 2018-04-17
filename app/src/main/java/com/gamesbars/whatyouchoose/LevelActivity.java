@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -37,6 +38,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_ADS;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_COINS;
+import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_FEEDBACK;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_FIRST_COINS_TOUCH;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1;
 import static com.gamesbars.whatyouchoose.MainActivity.APP_PREFERENCES_LVL_PACK_1_COMPLETED;
@@ -109,6 +111,7 @@ public class LevelActivity extends AppCompatActivity {
     AlertDialog helpDialog;
     AlertDialog coinsDialog;
     AlertDialog packEndDialog;
+    AlertDialog feedbackDialog;
 
     SharedPreferences mSettings;
     SharedPreferences.Editor editor;
@@ -133,9 +136,15 @@ public class LevelActivity extends AppCompatActivity {
         Intent intent = getIntent();
         TABLE_QUESTIONS_NAME = intent.getStringExtra(Intent.EXTRA_TEXT);
         switch (TABLE_QUESTIONS_NAME) {
-            case "PACK_1": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_1; break;
-            case "PACK_2": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_2; break;
-            case "PACK_HARD": APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_HARD; break;
+            case "PACK_1":
+                APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_1;
+                break;
+            case "PACK_2":
+                APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_2;
+                break;
+            case "PACK_HARD":
+                APP_PREFERENCES_LVL = APP_PREFERENCES_LVL_PACK_HARD;
+                break;
         }
 
         //  Подруб шрифтов
@@ -188,6 +197,9 @@ public class LevelActivity extends AppCompatActivity {
 
         //  Загружаем диалоговое окно окончания пака с вопросами
         loadPackEndDialog();
+
+        //  Загружаем диалоговое окно фидбека
+        loadFeedbackDialog();
 
         //  Загружаем рекламу
         loadAds();
@@ -396,6 +408,47 @@ public class LevelActivity extends AppCompatActivity {
         packEndDialog = builder.create();
     }
 
+    private void loadFeedbackDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.rate_dialog_message)
+
+                .setPositiveButton(R.string.rate_dialog_like, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.gamesbars.whatyouchoose")));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.gamesbars.whatyouchoose")));
+                        }
+                        editor = mSettings.edit();
+                        editor.putBoolean(APP_PREFERENCES_FEEDBACK, true);
+                        editor.apply();
+                    }
+                })
+
+                .setNeutralButton(R.string.rate_dialog_later, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+
+                .setNegativeButton(R.string.rate_dialog_dislike, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent mailFeedback = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:gamesbarscompany@gmail.com"))
+                                .putExtra(Intent.EXTRA_SUBJECT, "Что ты выберешь? - обратная связь");
+                        startActivity(Intent.createChooser(mailFeedback, "Отправить Email"));
+                        editor = mSettings.edit();
+                        editor.putBoolean(APP_PREFERENCES_FEEDBACK, true);
+                        editor.apply();
+                    }
+                });
+
+        feedbackDialog = builder.create();
+    }
+
     private void loadAds() {
         MobileAds.initialize(this, "INSERT ID HERE");
 
@@ -445,7 +498,7 @@ public class LevelActivity extends AppCompatActivity {
         //  Закрываем DataBase
         myDb.close();
 
-        //  Показ рекламы
+        //  Показ рекламы или фидбека
         if (mSettings.getBoolean(APP_PREFERENCES_ADS, true) && System.currentTimeMillis() - adsTimer >= AD_FREQUENCY) {
             if (mInterstitialAd.isLoaded()) {
                 mInterstitialAd.show();
@@ -454,6 +507,10 @@ public class LevelActivity extends AppCompatActivity {
                 Log.d("ADS", "The interstitial wasn't loaded yet.");
             }
 
+        } else if (!mSettings.getBoolean(APP_PREFERENCES_FEEDBACK, true) &&
+                mSettings.getInt(APP_PREFERENCES_LVL, 1) > 8 &&
+                System.currentTimeMillis() - adsTimer >= 20000L) {
+            feedbackDialog.show();
         }
     }
 
@@ -627,9 +684,15 @@ public class LevelActivity extends AppCompatActivity {
             Integer levels_pack_1;
             Integer levels_pack_2;
             Integer levels_pack_hard;
-            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_1_COMPLETED , false)) levels_pack_1 = 40; else levels_pack_1 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0);
-            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_2_COMPLETED , false)) levels_pack_2 = 40; else levels_pack_2 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0);
-            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED , false)) levels_pack_hard = 40; else levels_pack_hard = mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0);
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_1_COMPLETED, false))
+                levels_pack_1 = 40;
+            else levels_pack_1 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_1, 0);
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_2_COMPLETED, false))
+                levels_pack_2 = 40;
+            else levels_pack_2 = mSettings.getInt(APP_PREFERENCES_LVL_PACK_2, 0);
+            if (mSettings.getBoolean(APP_PREFERENCES_LVL_PACK_HARD_COMPLETED, false))
+                levels_pack_hard = 40;
+            else levels_pack_hard = mSettings.getInt(APP_PREFERENCES_LVL_PACK_HARD, 0);
             Integer all_levels = levels_pack_1 + levels_pack_2 + levels_pack_hard - 2;
 
             editor.putFloat(APP_PREFERENCES_TIME_AVER, Math.round(((mSettings.getFloat(APP_PREFERENCES_TIME_AVER, 0) * (all_levels - mSettings.getInt(APP_PREFERENCES_LVL_SKIPPED, 0) - 1)

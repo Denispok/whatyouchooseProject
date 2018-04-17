@@ -3,6 +3,7 @@
     <string name="choose">Выбирать</string>
     <string name="statistic">Статистика</string>
     <string name="shop">Магазин</string>
+    <string name="packs">Сложность</string>
     <string name="question">\?</string>
     <string name="percent_top">%d%%</string>
     <string name="percent_bot">%d%%</string>
@@ -17,9 +18,14 @@
     <!-- Для диалоговых окон -->
     <string name="help_dialog_message">place help here</string>
     <string name="help_dialog_title">Важная информация</string>
-    <string name="pack_end_dialog_message">Вы дошли до конца пака, можете запустить его ещё раз (статистика больше не будет засчитываться) или перейти к следующему, но предупреждаю, там будет жестче.</string>
+    <string name="pack_end_dialog_message">Вы дошли до конца набора с вопросами, можете запустить его ещё раз (статистика по нему больше не будет засчитываться) или перейти к следующему, но предупреждаю, там будет жестче.</string>
     <string name="pack_end_dialog_title">Ну что ж</string>
     <string name="dialog_negative">Ок</string>
+    <string name="rate_dialog_message">Оцените игру!</string>
+    <string name="rate_dialog_like">Нравится!</string>
+    <string name="rate_dialog_dislike">Отстой</string>
+    <string name="rate_dialog_later">Позже</string>
+
 
     <string name="confirm_dialog_title">Купить тему %1$s за %2$d?</string>
     <string name="confirm_dialog_title_pack">Купить %1$s за %2$d?</string>

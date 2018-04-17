@@ -299,7 +299,7 @@ public class ShopActivity extends AppCompatActivity implements BillingProcessor.
 
     private void loadRewardedVideoAd() {
         Toast.makeText(getApplicationContext(), "Загрузка...",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_LONG).show();
         mRewardedVideoAd.loadAd("INSERT ID HERE",
                 new AdRequest.Builder().build());
     }

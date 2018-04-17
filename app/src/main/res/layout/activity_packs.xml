@@ -8,15 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:shadowColor="?colorSecondaryLighter"
         android:shadowDx="2"
         android:shadowDy="2"
         android:shadowRadius="1"
-        android:text="Packs"
+        android:text="@string/packs"
         android:textAlignment="center"
         android:textColor="?colorTextTitle"
-        android:textSize="42sp" />
+        android:textSize="36sp" />
 
     <LinearLayout
         android:layout_width="340dp"
