@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.io.IOException;
 
@@ -209,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.choose_button).setBackground(button_drawable);
         findViewById(R.id.stat_button).setBackground(button_drawable);
         findViewById(R.id.shop_button).setBackground(button_drawable);
+
+        TextView privacyPolicy = findViewById(R.id.privacy_policy);
+        privacyPolicy.setMovementMethod(LinkMovementMethod.getInstance());
 
         //  Создаем DataBase с помощью DataBaseHelper
         myDbHelper = new DataBaseHelper(this);

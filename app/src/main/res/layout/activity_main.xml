@@ -54,7 +54,15 @@
             android:onClick="shop"
             android:text="@string/shop" />
 
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/privacy_policy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="2dp"
+        android:text="@string/privacy_policy"
+        android:textColor="?colorTextTitle" />
 
 </LinearLayout>

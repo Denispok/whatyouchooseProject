@@ -3,6 +3,7 @@
     <string name="choose">Выбирать</string>
     <string name="statistic">Статистика</string>
     <string name="shop">Магазин</string>
+    <string name="privacy_policy"><a href="https://gamesbars.github.io/Privacy-Policy/">Политика конфиденциальности</a></string>
     <string name="packs">Сложность</string>
     <string name="question">\?</string>
     <string name="percent_top">%d%%</string>
